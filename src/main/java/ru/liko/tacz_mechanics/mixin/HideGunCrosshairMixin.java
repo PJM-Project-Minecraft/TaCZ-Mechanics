@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import ru.liko.tacz_mechanics.Config;
+import ru.liko.tacz_mechanics.client.ClientTweakSettings;
 
 /**
  * Mixin to completely hide the TACZ gun crosshair.
@@ -17,7 +17,7 @@ public abstract class HideGunCrosshairMixin {
     
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private static void tacz_mechanics$hideGunCrosshair(GuiGraphics graphics, Window window, CallbackInfo ci) {
-        if (Config.Tweaks.hideGunCrosshair) {
+        if (ClientTweakSettings.hideGunCrosshair()) {
             ci.cancel();
         }
     }

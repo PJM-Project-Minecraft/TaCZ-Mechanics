@@ -9,49 +9,41 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+import ru.liko.tacz_mechanics.Config;
+import ru.liko.tacz_mechanics.client.ClientDistantFireSettings;
 
 /**
- * Handles distant fire sound effects.
- * Applies low-pass filtering based on distance from the player.
+ * Low-pass muffle on TaCZ native 3rd-person shot sounds based on listener distance
+ * (only when distant_fire is enabled on the client).
  */
-public class DistantFireHandler {
+public final class DistantFireHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
-    
-    // Distance thresholds (in blocks)
-    private static final double NEAR_DISTANCE = 30.0;   // No muffle below this
-    private static final double FAR_DISTANCE = 300.0;   // Maximum muffle above this
-    
-    /**
-     * Handle a gun sound and optionally apply distance filtering.
-     * 
-     * @return A filtered GunSoundInstance, or null to let TACZ handle it normally
-     */
+
+    private DistantFireHandler() {
+    }
+
     @Nullable
     public static GunSoundInstance handleGunSound(
-            Entity entity, 
-            ResourceLocation soundName, 
-            float volume, 
-            float pitch, 
-            int attenuationDistance, 
+            Entity entity,
+            ResourceLocation soundName,
+            float volume,
+            float pitch,
+            int attenuationDistance,
             boolean mono,
             double distanceToPlayer) {
-        
-        LOGGER.debug("[DistantFire] handleGunSound called: sound={}, distance={}", soundName, distanceToPlayer);
-        
-        // Calculate muffle amount based on distance
-        float muffleAmount = SoundFilterUtil.calculateMuffleFromDistance(
-            distanceToPlayer, NEAR_DISTANCE, FAR_DISTANCE
-        );
-        
-        LOGGER.debug("[DistantFire] Calculated muffleAmount: {}", muffleAmount);
-        
-        // If no muffle needed, let TACZ handle it normally
-        if (muffleAmount <= 0.01f) {
-            LOGGER.debug("[DistantFire] No muffle needed, returning null");
+
+        if (!ClientDistantFireSettings.enabled()) {
             return null;
         }
-        
-        // Create the gun sound instance normally
+
+        double near = ClientDistantFireSettings.nearSoundRange();
+        double far = Math.max(ClientDistantFireSettings.muffleFarDistance(), near + 1.0);
+
+        float muffleAmount = SoundFilterUtil.calculateMuffleFromDistance(distanceToPlayer, near, far);
+        if (muffleAmount <= 0.01f) {
+            return null;
+        }
+
         GunSoundInstance soundInstance = new GunSoundInstance(
             ModSounds.GUN.get(),
             SoundSource.PLAYERS,
@@ -62,17 +54,13 @@ public class DistantFireHandler {
             soundName,
             mono
         );
-        
-        LOGGER.debug("[DistantFire] Created GunSoundInstance with muffle={}", muffleAmount);
-        
-        // Register for filter application
+
         SoundFilterRegistry.register(soundInstance, muffleAmount);
-        
-        // Play the sound
         Minecraft.getInstance().getSoundManager().play(soundInstance);
-        
-        LOGGER.debug("[DistantFire] Sound played and registered for filtering");
-        
+
+        if (Config.debug) {
+            LOGGER.info("[DistantFire] Muffle applied sound={} dist={} muffle={}", soundName, distanceToPlayer, muffleAmount);
+        }
         return soundInstance;
     }
 }

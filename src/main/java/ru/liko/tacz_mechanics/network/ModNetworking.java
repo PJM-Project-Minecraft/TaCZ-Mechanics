@@ -1,5 +1,6 @@
 package ru.liko.tacz_mechanics.network;
 
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -9,8 +10,10 @@ import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import ru.liko.tacz_mechanics.TaczMechanics;
+import ru.liko.tacz_mechanics.movement.MovementPosture;
 import ru.liko.tacz_mechanics.movement.MovementStateManager;
 import ru.liko.tacz_mechanics.movement.PlayerState;
+import ru.liko.tacz_mechanics.movement.client.MovementClientHandler;
 import ru.liko.tacz_mechanics.movement.network.MovementStateBroadcastPayload;
 import ru.liko.tacz_mechanics.movement.network.MovementStatePayload;
 
@@ -31,6 +34,16 @@ public class ModNetworking {
                 SuppressionPacket.TYPE,
                 SuppressionPacket.STREAM_CODEC,
                 SuppressionPacket::handle);
+
+        registrar.playToClient(
+                TweaksSyncPayload.TYPE,
+                TweaksSyncPayload.STREAM_CODEC,
+                TweaksSyncPayload::handle);
+
+        registrar.playToClient(
+                DistantFireSyncPayload.TYPE,
+                DistantFireSyncPayload.STREAM_CODEC,
+                DistantFireSyncPayload::handle);
 
         registrar.playToServer(
                 FreeAimSyncPacket.TYPE,
@@ -55,21 +68,27 @@ public class ModNetworking {
             if (context.player() instanceof ServerPlayer serverPlayer) {
                 PlayerState state = MovementStateManager.getOrCreate(serverPlayer.getUUID());
                 int oldCode = state.writeCode();
-                state.readCode(payload.stateCode());
-
-                if (oldCode != payload.stateCode()) {
-                    PacketDistributor.sendToAllPlayers(
-                            new MovementStateBroadcastPayload(serverPlayer.getUUID(), payload.stateCode()));
+                if (oldCode == payload.stateCode()) {
+                    return;
                 }
+                if (!MovementPosture.canApplyMovementCode(serverPlayer, oldCode, payload.stateCode())) {
+                    PacketDistributor.sendToPlayer(serverPlayer, new MovementStatePayload(oldCode));
+                    return;
+                }
+                state.readCode(payload.stateCode());
+                serverPlayer.refreshDimensions();
+                MovementPosture.logHitbox("SERVER", serverPlayer, state);
+
+                PacketDistributor.sendToAllPlayers(
+                        new MovementStateBroadcastPayload(serverPlayer.getUUID(), payload.stateCode()));
             }
         });
     }
 
     private static void handleMovementClientState(MovementStatePayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            if (context.player() != null) {
-                PlayerState state = MovementStateManager.getOrCreate(context.player().getUUID());
-                state.readCode(payload.stateCode());
+            if (context.player() instanceof LocalPlayer) {
+                MovementClientHandler.applySyncedStateFromServer(payload.stateCode());
             }
         });
     }
@@ -78,6 +97,15 @@ public class ModNetworking {
         context.enqueueWork(() -> {
             if (context.player() != null && !context.player().getUUID().equals(payload.playerId())) {
                 MovementStateManager.updateState(payload.playerId(), payload.stateCode());
+                var level = context.player().level();
+                if (level.isClientSide()) {
+                    for (var p : level.players()) {
+                        if (p.getUUID().equals(payload.playerId())) {
+                            p.refreshDimensions();
+                            break;
+                        }
+                    }
+                }
             }
         });
     }

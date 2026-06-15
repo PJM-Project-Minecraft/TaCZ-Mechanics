@@ -44,12 +44,46 @@ public class MovementKeyBindings {
         GLFW.GLFW_KEY_E,
         CATEGORY
     );
-    
+
+    // --- Debug pose-tuning keys (active only when movement.debug = true) ---
+    /** Cycle which pose parameter is selected for tuning. */
+    public static final KeyMapping TUNE_SELECT_KEY = new KeyMapping(
+        "key.tacz_mechanics.tune_select",
+        InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_K,
+        CATEGORY
+    );
+    /** Increase the selected pose parameter. */
+    public static final KeyMapping TUNE_INC_KEY = new KeyMapping(
+        "key.tacz_mechanics.tune_inc",
+        InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_RIGHT_BRACKET,
+        CATEGORY
+    );
+    /** Decrease the selected pose parameter. */
+    public static final KeyMapping TUNE_DEC_KEY = new KeyMapping(
+        "key.tacz_mechanics.tune_dec",
+        InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_LEFT_BRACKET,
+        CATEGORY
+    );
+    /** Print all current pose values to chat (copy them back for hardcoding). */
+    public static final KeyMapping TUNE_DUMP_KEY = new KeyMapping(
+        "key.tacz_mechanics.tune_dump",
+        InputConstants.Type.KEYSYM,
+        GLFW.GLFW_KEY_P,
+        CATEGORY
+    );
+
     @SubscribeEvent
     public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
         event.register(SIT_KEY);
         event.register(CRAWL_KEY);
         event.register(LEAN_LEFT_KEY);
         event.register(LEAN_RIGHT_KEY);
+        event.register(TUNE_SELECT_KEY);
+        event.register(TUNE_INC_KEY);
+        event.register(TUNE_DEC_KEY);
+        event.register(TUNE_DUMP_KEY);
     }
 }

@@ -8,6 +8,7 @@ import ru.liko.tacz_mechanics.data.core.BlockTestable;
 import ru.liko.tacz_mechanics.data.core.EntityTestable;
 import ru.liko.tacz_mechanics.data.core.Target;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -55,7 +56,9 @@ public sealed interface BulletParticles permits BulletParticles.BlockParticles, 
     enum CoordinatesType {
         ABSOLUTE("absolute"),
         RELATIVE("relative"),
-        LOCAL("local");
+        LOCAL("local"),
+        /** Block hits: velocity mean along the struck face normal (debris away from the surface; opposite incoming bullet). x = along-normal strength, y/z = tangent spread. */
+        NORMAL("normal");
         
         private final String key;
         
@@ -67,11 +70,15 @@ public sealed interface BulletParticles permits BulletParticles.BlockParticles, 
             return key;
         }
         
-        private static final Map<String, CoordinatesType> BY_KEY = Map.of(
-            "absolute", ABSOLUTE,
-            "relative", RELATIVE,
-            "local", LOCAL
-        );
+        private static final Map<String, CoordinatesType> BY_KEY;
+        
+        static {
+            Map<String, CoordinatesType> m = new HashMap<>();
+            for (CoordinatesType t : values()) {
+                m.put(t.key, t);
+            }
+            BY_KEY = Map.copyOf(m);
+        }
         
         public static CoordinatesType byKey(String key) {
             return BY_KEY.get(key);

@@ -1,0 +1,9 @@
+{
+  "caliber_id": "tacz:65creedmoor",
+  "layers": [
+    { "sound": "tacz_mechanics:distant/65creedmoor/close",   "volume": 1.0 },
+    { "sound": "tacz_mechanics:distant/65creedmoor/mid",     "volume": 1.2 },
+    { "sound": "tacz_mechanics:distant/65creedmoor/far",     "volume": 1.4 },
+    { "sound": "tacz_mechanics:distant/65creedmoor/veryfar", "volume": 1.6 }
+  ]
+}

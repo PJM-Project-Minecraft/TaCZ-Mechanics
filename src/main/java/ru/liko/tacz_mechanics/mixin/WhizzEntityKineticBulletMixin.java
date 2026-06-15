@@ -116,7 +116,7 @@ public abstract class WhizzEntityKineticBulletMixin implements EntityKineticBull
         Vec3 closestPoint = currentPos.add(trajectory.scale(t));
         double distance = playerPos.distanceTo(closestPoint);
 
-        if (doWhizz) {
+        if (doWhizz && distance <= Config.Whizz.maxDistance) {
             WhizzSound.DistanceSound sound = whizzConfig.getSoundForDistance(distance);
             if (sound != null) {
                 taczMechanics$playedWhizzFor.add(player.getId());

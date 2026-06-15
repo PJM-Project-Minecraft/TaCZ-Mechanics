@@ -111,6 +111,7 @@ public sealed interface BulletSounds permits BulletSounds.BlockSound, BulletSoun
         List<BlockTestable> blocks,
         List<BlockSoundEntry> hit,
         List<BlockSoundEntry> ricochet,
+        List<BlockSoundEntry> ricochetImpact,
         List<BlockSoundEntry> pierce,
         List<BlockSoundEntry> breakSound,
         int priority
@@ -120,6 +121,7 @@ public sealed interface BulletSounds permits BulletSounds.BlockSound, BulletSoun
             CodecUtils.strictOptionalFieldOf(Codec.list(BlockTestable.CODEC), "blocks", List.of()).forGetter(BlockSound::blocks),
             CodecUtils.strictOptionalFieldOf(CodecUtils.singleOrListCodec(BlockSoundEntry.CODEC), "hit", List.of()).forGetter(BlockSound::hit),
             CodecUtils.strictOptionalFieldOf(CodecUtils.singleOrListCodec(BlockSoundEntry.CODEC), "ricochet", List.of()).forGetter(BlockSound::ricochet),
+            CodecUtils.strictOptionalFieldOf(CodecUtils.singleOrListCodec(BlockSoundEntry.CODEC), "ricochet_impact", List.of()).forGetter(BlockSound::ricochetImpact),
             CodecUtils.strictOptionalFieldOf(CodecUtils.singleOrListCodec(BlockSoundEntry.CODEC), "pierce", List.of()).forGetter(BlockSound::pierce),
             CodecUtils.strictOptionalFieldOf(CodecUtils.singleOrListCodec(BlockSoundEntry.CODEC), "break", List.of()).forGetter(BlockSound::breakSound),
             CodecUtils.strictOptionalFieldOf(Codec.INT, "priority", 0).forGetter(BlockSound::priority)

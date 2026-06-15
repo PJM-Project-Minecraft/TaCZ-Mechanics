@@ -3,9 +3,8 @@ package ru.liko.tacz_mechanics.movement.client;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -19,7 +18,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import ru.liko.tacz_mechanics.Config;
 import ru.liko.tacz_mechanics.TaczMechanics;
-import ru.liko.tacz_mechanics.mixin.movement.EntityDimensionsAccessor;
+import ru.liko.tacz_mechanics.movement.LeanCollision;
+import ru.liko.tacz_mechanics.movement.MovementPosture;
 import ru.liko.tacz_mechanics.movement.MovementStateManager;
 import ru.liko.tacz_mechanics.movement.PlayerState;
 import ru.liko.tacz_mechanics.movement.network.MovementNetworkHandler;
@@ -55,6 +55,20 @@ public class MovementClientHandler {
         return clientState;
     }
     
+    /**
+     * Откат/принудительная синхронизация с сервером (невалидная поза и т.п.).
+     */
+    public static void applySyncedStateFromServer(int code) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+        clientState.readCode(code);
+        lastSentCode = code;
+        MovementStateManager.updateState(mc.player.getUUID(), code);
+        mc.player.refreshDimensions();
+    }
+    
     public static PlayerState getStateForPlayer(Player player) {
         Minecraft mc = Minecraft.getInstance();
         if (player == mc.player) {
@@ -62,7 +76,7 @@ public class MovementClientHandler {
         }
         return MovementStateManager.get(player.getUUID());
     }
-    
+
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         if (!Config.Movement.enabled) return;
@@ -75,6 +89,7 @@ public class MovementClientHandler {
         
         // Update client state offsets for smooth animation
         clientState.updateOffset();
+        clampLeanForCollision(mc.player);
         
         // Update slide charging when sprinting
         if (mc.player.isSprinting() && !clientState.isSitting()) {
@@ -89,11 +104,8 @@ public class MovementClientHandler {
             applySlideMovement(mc.player);
         }
         
-        // Update player dimensions
-        updateClientDimensions(mc.player);
-        
-        // Sync state to server
-        syncStateToServer();
+        // Push state to server + refresh dimensions only on change.
+        flushStateChange(mc.player);
     }
     
     @SubscribeEvent
@@ -103,67 +115,55 @@ public class MovementClientHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.screen != null) return;
         
-        handleSitInput(mc, event);
-        handleCrawlInput(mc, event);
+        handleSitInput(mc);
+        handleCrawlInput(mc);
         handleLeanInput(mc, event);
     }
     
-    private static void handleSitInput(Minecraft mc, InputEvent.Key event) {
+    private static void handleSitInput(Minecraft mc) {
         if (!Config.Movement.sitEnabled) return;
         KeyMapping sitKey = MovementKeyBindings.SIT_KEY;
-        
+
         if (sitKey.isDown() && !sitKeyLock && clientState.canSit()) {
             sitKeyLock = true;
-            
+            LocalPlayer player = mc.player;
+
             if (!clientState.isSitting()) {
-                if (mc.player.onGround()) {
-                    // Check collision for sitting
-                    if (canFitInHeight(mc.player, 1.35f)) {
-                        clientState.enableSit();
-                        
-                        // Sliding
-                        if (mc.player.isSprinting() && Config.Movement.slideEnabled) {
-                            slideAmplifier = Config.Movement.slideMaxForce;
-                            slideDirection = new Vec3(
-                                mc.player.getX() - mc.player.xOld, 0,
-                                mc.player.getZ() - mc.player.zOld
-                            ).normalize();
-                        }
+                if (player.onGround() && MovementPosture.canEnterSitLikeModularMovements(player)) {
+                    clientState.enableSit();
+                    if (player.isSprinting() && Config.Movement.slideEnabled) {
+                        slideAmplifier = Config.Movement.slideMaxForce;
+                        slideDirection = MovementPosture.horizontalMotionOrLook(player);
                     }
                 }
             } else {
-                // Stand up
-                if (canFitInHeight(mc.player, 1.8f)) {
+                if (MovementPosture.canFitStanding(player)) {
                     slideAmplifier = 0;
                     clientState.disableSit();
                 }
             }
         }
-        
+
         if (!sitKey.isDown()) {
             sitKeyLock = false;
         }
     }
-    
-    private static void handleCrawlInput(Minecraft mc, InputEvent.Key event) {
+
+    private static void handleCrawlInput(Minecraft mc) {
         if (!Config.Movement.crawlEnabled) return;
         KeyMapping crawlKey = MovementKeyBindings.CRAWL_KEY;
-        
+
         if (crawlKey.isDown() && !crawlKeyLock && clientState.canCrawl()) {
             crawlKeyLock = true;
-            
+            LocalPlayer player = mc.player;
+
             if (!clientState.isCrawling()) {
-                if (mc.player.onGround()) {
+                if (player.onGround() && MovementPosture.canFitCrawling(player)) {
                     clientState.enableCrawling();
                     crawlingMousePosXMove = 0;
-                    
-                    // Dive if sprinting
-                    if (mc.player.isSprinting()) {
-                        Vec3 dir = new Vec3(
-                            mc.player.getX() - mc.player.xOld, 0,
-                            mc.player.getZ() - mc.player.zOld
-                        ).normalize();
-                        mc.player.setDeltaMovement(
+                    if (player.isSprinting()) {
+                        Vec3 dir = MovementPosture.horizontalMotionOrLook(player);
+                        player.setDeltaMovement(
                             dir.x * slideCharging,
                             0.2 * slideCharging,
                             dir.z * slideCharging
@@ -171,12 +171,12 @@ public class MovementClientHandler {
                     }
                 }
             } else {
-                if (canFitInHeight(mc.player, 1.8f)) {
+                if (MovementPosture.canFitStanding(player)) {
                     clientState.disableCrawling();
                 }
             }
         }
-        
+
         if (!crawlKey.isDown()) {
             crawlKeyLock = false;
         }
@@ -237,7 +237,7 @@ public class MovementClientHandler {
             if (event.getInput().jumping) {
                 event.getInput().jumping = false;
                 Minecraft mc = Minecraft.getInstance();
-                if (mc.player != null && canFitInHeight(mc.player, 1.8f)) {
+                if (mc.player != null && MovementPosture.canFitStanding(mc.player)) {
                     clientState.disableCrawling();
                 }
             }
@@ -286,6 +286,12 @@ public class MovementClientHandler {
                 cameraProbeOffset -= speed * amplifier;
             }
         }
+
+        if (mc.player != null) {
+            float maxLeft = LeanCollision.maxLeanMagnitude(mc.player, -1f);
+            float maxRight = LeanCollision.maxLeanMagnitude(mc.player, 1f);
+            cameraProbeOffset = Mth.clamp(cameraProbeOffset, -maxLeft, maxRight);
+        }
         
         // Apply lean rotation
         float roll = (float) event.getRoll();
@@ -308,37 +314,26 @@ public class MovementClientHandler {
         }
     }
     
-    private static void updateClientDimensions(LocalPlayer player) {
-        MovementStateManager.updateState(player.getUUID(), clientState.writeCode());
-
-        EntityDimensions newDims = clientState.getCustomDimensions();
-        if (newDims != null) {
-            float newEyeHeight = clientState.getCustomEyeHeight();
-            ((EntityDimensionsAccessor) player).tacz$setDimensions(newDims);
-            ((EntityDimensionsAccessor) player).tacz$setEyeHeight(newEyeHeight);
-            player.setPos(player.getX(), player.getY(), player.getZ());
-        } else {
-            player.refreshDimensions();
-        }
-    }
-    
-    private static boolean canFitInHeight(Player player, float height) {
-        float width = player.getBbWidth();
-        AABB box = new AABB(
-            player.getX() - width / 2, player.getY(), player.getZ() - width / 2,
-            player.getX() + width / 2, player.getY() + height, player.getZ() + width / 2
-        );
-        return player.level().noCollision(player, box);
-    }
-    
-    private static void syncStateToServer() {
+    private static void flushStateChange(LocalPlayer player) {
         int code = clientState.writeCode();
-        if (code != lastSentCode) {
-            MovementNetworkHandler.sendStateToServer(code);
-            lastSentCode = code;
-        }
+        if (code == lastSentCode) return;
+        MovementStateManager.updateState(player.getUUID(), code);
+        player.refreshDimensions();
+        MovementPosture.logHitbox("CLIENT", player, clientState);
+        MovementNetworkHandler.sendStateToServer(code);
+        lastSentCode = code;
     }
-    
+
+    private static void clampLeanForCollision(LocalPlayer player) {
+        if (player == null) {
+            return;
+        }
+        float maxLeft = LeanCollision.maxLeanMagnitude(player, -1f);
+        float maxRight = LeanCollision.maxLeanMagnitude(player, 1f);
+        clientState.clampProbeOffset(maxLeft, maxRight);
+        cameraProbeOffset = Mth.clamp(cameraProbeOffset, -maxLeft, maxRight);
+    }
+
     private static void resetState() {
         clientState.reset();
         slideAmplifier = 0;
@@ -358,18 +353,19 @@ public class MovementClientHandler {
         
         PoseStack poseStack = event.getPoseStack();
         float yBodyRot = player.yBodyRot;
-        float probeOffset = state.getProbeOffset();
+        // Lerp with partial tick for smooth render between tick-driven updates
+        float probeOffset = Mth.lerp(event.getPartialTick(), state.getProbeOffsetOld(), state.getProbeOffset());
         
-        // Apply sitting translation
+        // Drop model toward feet — bent legs lift mesh without moving entity Y
         if (state.isSitting()) {
-            poseStack.translate(0, -0.5, 0);
+            poseStack.translate(0, MovementPosture.SIT_MODEL_Y_OFFSET, 0);
         }
         
         // Apply crawling rotation
         if (state.isCrawling()) {
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - yBodyRot));
             poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
-            poseStack.translate(0, -1.3, 0.1);
+            poseStack.translate(0, MovementPosture.CRAWL_MODEL_FORWARD, MovementPosture.CRAWL_MODEL_Z);
             poseStack.translate(probeOffset * 0.4, 0, 0);
             poseStack.mulPose(Axis.YP.rotationDegrees(-(180.0F - yBodyRot)));
         }

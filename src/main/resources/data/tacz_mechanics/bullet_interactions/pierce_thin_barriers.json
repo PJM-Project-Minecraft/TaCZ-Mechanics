@@ -1,0 +1,22 @@
+{
+  "type": "block",
+  "target": [],
+  "blocks": [
+    "#minecraft:fences",
+    "#minecraft:wooden_fences",
+    "#minecraft:doors",
+    "minecraft:iron_bars"
+  ],
+  "pierce": {
+    "chance": 0.8,
+    "min_damage": 0.0,
+    "max_hardness": -1.0,
+    "damage_multiplier": 0.85,
+    "speed_multiplier": 0.85,
+    "spawn_hole": true,
+    "spawn_exit_hole": true,
+    "spawn_particles": true,
+    "spawn_sounds": true
+  },
+  "priority": 5
+}

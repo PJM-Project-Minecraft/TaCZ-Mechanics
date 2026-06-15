@@ -1,0 +1,17 @@
+{
+  "type": "block",
+  "priority": 10,
+  "blocks": ["minecraft:grass_block", "minecraft:dirt_path"],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.grass",
+    "volume": 0.95,
+    "pitch": 1.05,
+    "range": 8.0
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.grass",
+    "volume": 0.9,
+    "pitch": 1.02,
+    "range": 8.0
+  }
+}

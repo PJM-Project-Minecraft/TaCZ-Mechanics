@@ -47,21 +47,25 @@ public record WhizzSound(
     }
     
     /**
-     * Get the appropriate sound for the given distance.
-     * Returns the first sound whose threshold is >= distance.
+     * Closest point on trajectory to the player (blocks). Uses the smallest tier whose threshold is still
+     * not below that distance; if the bullet passes farther than all thresholds, the farthest tier is used.
      */
     public DistanceSound getSoundForDistance(double distance) {
+        if (sounds.isEmpty()) {
+            return null;
+        }
+        DistanceSound farthest = sounds.getLast();
         for (DistanceSound sound : sounds) {
             if (distance <= sound.threshold()) {
                 return sound;
             }
         }
-        return null;
+        return farthest;
     }
     
-    public static final WhizzSound DEFAULT = new WhizzSound(5.0, List.of(
-        new DistanceSound(2.0, ResourceLocation.parse("taczmechanics:generic.whizz.near"), 1.0f, 1.0f),
-        new DistanceSound(5.0, ResourceLocation.parse("taczmechanics:generic.whizz.mid"), 1.0f, 1.0f),
-        new DistanceSound(10.0, ResourceLocation.parse("taczmechanics:generic.whizz.far"), 1.0f, 1.0f)
+    public static final WhizzSound DEFAULT = new WhizzSound(1.0, List.of(
+        new DistanceSound(2.0, ResourceLocation.parse("tacz_mechanics:generic.whizz.near"), 1.0f, 1.0f),
+        new DistanceSound(5.0, ResourceLocation.parse("tacz_mechanics:generic.whizz.mid"), 1.0f, 1.0f),
+        new DistanceSound(10.0, ResourceLocation.parse("tacz_mechanics:generic.whizz.far"), 1.0f, 1.0f)
     ));
 }

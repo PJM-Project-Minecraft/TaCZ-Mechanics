@@ -5,14 +5,15 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "WhizzEntityKineticBulletMixin",
-    "RicochetEntityKineticBulletMixin",
-    "PierceEntityKineticBulletMixin",
+    "BulletBlockImpactMixin",
+    "BulletHoleForceSpawnMixin",
     "EntityKineticBulletStartPosAccessorMixin",
     "FreeAimShootMixin",
     "movement.PlayerDimensionsMixin",
+    "movement.CrawlBoundingBoxMixin",
+    "movement.TaczBulletObbMixin",
     "movement.PlayerEyePositionMixin",
-    "movement.BulletLeanOffsetMixin",
-    "movement.EntityDimensionsAccessor"
+    "movement.BulletLeanOffsetMixin"
   ],
     "client": [
     "SoundEngineMixin",

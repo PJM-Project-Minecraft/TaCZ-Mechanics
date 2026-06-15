@@ -1,0 +1,9 @@
+{
+  "caliber_id": "tacz:revolver",
+  "layers": [
+    { "sound": "tacz_mechanics:distant/revolver/close",   "volume": 1.0 },
+    { "sound": "tacz_mechanics:distant/revolver/mid",     "volume": 1.1 },
+    { "sound": "tacz_mechanics:distant/revolver/far",     "volume": 1.2 },
+    { "sound": "tacz_mechanics:distant/revolver/veryfar", "volume": 1.3 }
+  ]
+}

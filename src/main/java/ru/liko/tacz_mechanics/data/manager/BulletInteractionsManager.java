@@ -2,27 +2,36 @@ package ru.liko.tacz_mechanics.data.manager;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import ru.liko.tacz_mechanics.Config;
 import ru.liko.tacz_mechanics.data.BulletInteractions;
 
 import java.util.Comparator;
 
 public class BulletInteractionsManager extends BaseDataManager<BulletInteractions> {
     
+    // Higher priority wins, then more-specific (has target/has blocks) wins.
     private static final Comparator<BulletInteractions> COMPARATOR = Comparator
-        .comparingInt(BulletInteractions::getPriority)
-        .thenComparing(i -> !i.getTarget().isEmpty() ? 0 : 1);
+        .comparingInt(BulletInteractions::getPriority).reversed()
+        .thenComparing(i -> !i.getTarget().isEmpty() ? 0 : 1)
+        .thenComparing(i -> {
+            if (i instanceof BulletInteractions.BlockInteraction bi) {
+                return !bi.blocks().isEmpty() ? 0 : 1;
+            }
+            return 1;
+        });
     
     public static final BulletInteractionsManager INSTANCE = new BulletInteractionsManager();
     
     private BulletInteractionsManager() {
-        super("bullet_interactions", COMPARATOR, BulletInteractions.CODEC);
+        super("bullet_interactions", COMPARATOR, BulletInteractions.CODEC,
+            "pierce_metal", "pierce_thin_barriers", "pointed_drip_stone");
     }
     
-    public BulletInteractions.PierceSettings findBlockPierce(ServerLevel level,
+    public BulletInteractions.PierceSettings findBlockPierce(Level level,
                                                              ResourceLocation gunId,
                                                              ResourceLocation ammoId,
                                                              float damage,
@@ -35,43 +44,68 @@ public class BulletInteractionsManager extends BaseDataManager<BulletInteraction
         for (var entry : interactions.entrySet()) {
             BulletInteractions.BlockInteraction interaction = entry.getValue();
             
-            if (!matchesTarget(interaction.target(), gunId, ammoId, damage)) continue;
+            if (!matchesTarget(interaction.target(), gunId, ammoId, damage)) {
+                debugTrace("'{}' rejected: target mismatch (gun={}, ammo={}, damage={})",
+                    entry.getKey(), gunId, ammoId, damage);
+                continue;
+            }
             
             if (!interaction.blocks().isEmpty()) {
                 boolean matches = interaction.blocks().stream()
                     .anyMatch(b -> b.test(level, result.getBlockPos(), state));
-                if (!matches) continue;
+                if (!matches) {
+                    debugTrace("'{}' rejected: block {} not in allowed list",
+                        entry.getKey(), state.getBlock());
+                    continue;
+                }
             }
             
             BulletInteractions.PierceSettings pierce = interaction.pierce();
-            if (!canPierce(level, result.getBlockPos(), state, damage, distance, pierce, random)) {
+            String reason = pierceRejectionReason(level, result.getBlockPos(), state, damage, distance, pierce, random);
+            if (reason != null) {
+                debugTrace("'{}' rejected: {}", entry.getKey(), reason);
                 continue;
             }
             
-            logger.debug("Using block pierce interaction: {}", entry.getKey());
+            debugTrace("Using block pierce interaction: {}", entry.getKey());
             return pierce;
         }
         
         return null;
     }
-    
-    private boolean canPierce(ServerLevel level, BlockPos pos, BlockState state, float damage, double distance,
-                              BulletInteractions.PierceSettings pierce, RandomSource random) {
+
+    private void debugTrace(String fmt, Object... args) {
+        if (Config.debug || Config.Pierce.debug) {
+            logger.info("[BulletInteractions] " + fmt, args);
+        } else {
+            logger.debug(fmt, args);
+        }
+    }
+
+    private String pierceRejectionReason(Level level, BlockPos pos, BlockState state, float damage, double distance,
+                                         BulletInteractions.PierceSettings pierce, RandomSource random) {
         if (damage < pierce.minDamage()) {
-            return false;
+            return String.format("damage=%.2f below min_damage=%.2f", damage, pierce.minDamage());
         }
         if (pierce.maxDistance() >= 0.0f && distance > pierce.maxDistance()) {
-            return false;
+            return String.format("distance=%.2f above max_distance=%.2f", distance, pierce.maxDistance());
         }
         if (pierce.maxHardness() >= 0.0f) {
             float hardness = state.getDestroySpeed(level, pos);
-            if (hardness < 0 || hardness > pierce.maxHardness()) {
-                return false;
+            if (hardness < 0) {
+                return String.format("block %s is unbreakable (hardness<0)", state.getBlock());
+            }
+            if (hardness > pierce.maxHardness()) {
+                return String.format("hardness=%.2f above max_hardness=%.2f", hardness, pierce.maxHardness());
             }
         }
-        if (pierce.chance() < 1.0f && random.nextFloat() > pierce.chance()) {
-            return false;
+        if (pierce.chance() < 1.0f) {
+            float roll = random.nextFloat();
+            if (roll > pierce.chance()) {
+                return String.format("chanceRoll=%.3f above chance=%.3f", roll, pierce.chance());
+            }
         }
-        return true;
+        return null;
     }
+    
 }

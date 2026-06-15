@@ -1,0 +1,25 @@
+{
+  "type": "block",
+  "priority": 55,
+  "blocks": [
+    "minecraft:mud",
+    "minecraft:packed_mud",
+    "minecraft:muddy_mangrove_roots",
+    "minecraft:mud_bricks",
+    "minecraft:mud_brick_slab",
+    "minecraft:mud_brick_stairs",
+    "minecraft:mud_brick_wall"
+  ],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.mud",
+    "volume": 1.0,
+    "pitch": 1.0,
+    "range": 8.0
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.mud",
+    "volume": 0.95,
+    "pitch": 0.98,
+    "range": 8.0
+  }
+}

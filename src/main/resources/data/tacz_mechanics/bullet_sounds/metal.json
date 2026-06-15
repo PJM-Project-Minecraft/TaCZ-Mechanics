@@ -1,0 +1,22 @@
+{
+  "type": "block",
+  "blocks": [
+    "#tacz_mechanics:metal"
+  ],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.metal",
+    "range": 8.0
+  },
+  "ricochet_impact": {
+    "sound": "tacz_mechanics:generic.ricochet_impact",
+    "range": 8.0
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.metal",
+    "range": 8.0
+  },
+  "ricochet": {
+    "sound": "tacz_mechanics:generic.ricochet",
+    "range": 10.0
+  }
+}

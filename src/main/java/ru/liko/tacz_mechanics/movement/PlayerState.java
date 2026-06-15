@@ -1,7 +1,5 @@
 package ru.liko.tacz_mechanics.movement;
 
-import net.minecraft.world.entity.EntityDimensions;
-import org.jetbrains.annotations.Nullable;
 import ru.liko.tacz_mechanics.Config;
 
 import java.util.concurrent.TimeUnit;
@@ -15,18 +13,21 @@ public class PlayerState {
     private boolean crawling = false;
     private byte probe = 0;
     private float probeOffset = 0;
+    private float probeOffsetOld = 0;
     private long lastSyncTime = System.currentTimeMillis();
 
     public boolean isSitting() { return sitting; }
     public boolean isCrawling() { return crawling; }
     public byte getProbe() { return probe; }
     public float getProbeOffset() { return probeOffset; }
+    public float getProbeOffsetOld() { return probeOffsetOld; }
 
     private long lastSit;
     private long lastCrawl;
     private long lastProbe;
 
     public void updateOffset() {
+        probeOffsetOld = probeOffset;
         double amplifier = (System.currentTimeMillis() - lastSyncTime) * (60 / 1000d);
         lastSyncTime = System.currentTimeMillis();
         
@@ -59,6 +60,21 @@ public class PlayerState {
             }
             if (probeOffset > 0) {
                 probeOffset -= speed * amplifier;
+            }
+        }
+    }
+
+    /**
+     * Ограничивает анимированный наклон по максимальной величине в каждую сторону (из коллизии).
+     */
+    public void clampProbeOffset(float maxLeftMag, float maxRightMag) {
+        if (probeOffset < 0) {
+            if (probeOffset < -maxLeftMag) {
+                probeOffset = -maxLeftMag;
+            }
+        } else if (probeOffset > 0) {
+            if (probeOffset > maxRightMag) {
+                probeOffset = maxRightMag;
             }
         }
     }
@@ -119,6 +135,9 @@ public class PlayerState {
         crawling = code % 10 != 0;
         code /= 10;
         sitting = code % 10 != 0;
+        if (crawling && sitting) {
+            sitting = false;
+        }
     }
 
     public void reset() {
@@ -127,44 +146,5 @@ public class PlayerState {
 
     public int writeCode() {
         return (sitting ? 1 : 0) * 100 + (crawling ? 1 : 0) * 10 + probe + 1;
-    }
-    
-    /**
-     * Get the height of the player based on current state.
-     * Values are read from Config.
-     */
-    public float getHeight() {
-        if (crawling) return Config.Movement.crawlHeight;
-        if (sitting) return Config.Movement.sitHeight;
-        return 1.8f;
-    }
-    
-    /**
-     * Get the eye height of the player based on current state.
-     * Values are read from Config.
-     */
-    public float getEyeHeight(float defaultHeight) {
-        if (crawling) return Config.Movement.crawlEyeHeight;
-        if (sitting) return Config.Movement.sitEyeHeight;
-        return defaultHeight;
-    }
-
-    @Nullable
-    public EntityDimensions getCustomDimensions() {
-        if (crawling) {
-            return EntityDimensions.scalable(Config.Movement.crawlWidth, Config.Movement.crawlHeight)
-                .withEyeHeight(Config.Movement.crawlEyeHeight);
-        }
-        if (sitting) {
-            return EntityDimensions.scalable(Config.Movement.sitWidth, Config.Movement.sitHeight)
-                .withEyeHeight(Config.Movement.sitEyeHeight);
-        }
-        return null;
-    }
-
-    public float getCustomEyeHeight() {
-        if (crawling) return Config.Movement.crawlEyeHeight;
-        if (sitting) return Config.Movement.sitEyeHeight;
-        return Float.NaN;
     }
 }

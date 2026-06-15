@@ -1,7 +1,9 @@
 package ru.liko.tacz_mechanics.mixin.movement;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import org.spongepowered.asm.mixin.Final;
@@ -39,12 +41,14 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
         }
         if (state == null) return;
         
-        // Update offset animation for this state
-        state.updateOffset();
+        // Animation is advanced once per tick in client/server tick handlers.
+        // Here we lerp between the previous and current tick values using the
+        // render partial tick to keep the model smooth without overshooting the
+        // per-tick collision clamp (which would cause jitter near walls).
+        float partial = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
+        float probeOffset = Mth.lerp(partial, state.getProbeOffsetOld(), state.getProbeOffset());
         
-        float probeOffset = state.getProbeOffset();
-        
-        // Sitting pose
+        // Sitting — только ноги, как ModularMovements (ClientLitener.setRotationAngles)
         if (state.isSitting()) {
             rightLeg.xRot = -1.4137167F;
             rightLeg.yRot = (float) Math.PI / 10F;
@@ -54,7 +58,9 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
             leftLeg.zRot = -0.07853982F;
         }
         
-        // Crawling pose
+        // Crawling pose — руки вынесены вперёд по оси тела (поза стрелка лёжа: ствол
+        // смотрит вперёд). Руки/ствол могут выходить за передний край хитбокса — это
+        // нормально, бокс накрывает ТЕЛО (голова→ноги), а не оружие.
         if (state.isCrawling()) {
             head.xRot -= (float) (70 * Math.PI / 180);
             rightArm.xRot *= 0.2f;

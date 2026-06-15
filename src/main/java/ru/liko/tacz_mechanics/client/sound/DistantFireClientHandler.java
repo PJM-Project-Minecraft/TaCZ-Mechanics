@@ -11,93 +11,87 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.slf4j.Logger;
 import ru.liko.tacz_mechanics.Config;
-import ru.liko.tacz_mechanics.data.distant_fire.DistantFireSound;
-import ru.liko.tacz_mechanics.data.distant_fire.DistantFireSoundManager;
+import ru.liko.tacz_mechanics.client.ClientDistantFireSettings;
 import ru.liko.tacz_mechanics.network.DistantFireSoundPacket;
 
 /**
- * Client-side handler for distant fire sounds.
- * Receives packets from server and plays sounds based on distance with smooth transitions.
- * 
- * Sound levels:
- * - TACZ default (0 - taczRange): Handled by TACZ
- * - Close (taczRange - closeMax): Close distant sound
- * - Mid (closeMax - midMax): Medium distant sound
- * - Far (midMax - farMax): Far distant sound
- * - VeryFar (farMax+): Very far sound (optional)
+ * Plays distant-fire sounds on the receiving client. The server has already
+ * resolved which layer(s) to play and at what volume, so this side is just a
+ * thin player.
  */
 @OnlyIn(Dist.CLIENT)
-public class DistantFireClientHandler {
+public final class DistantFireClientHandler {
     private static final Logger LOGGER = LogUtils.getLogger();
-    
-    // Default TACZ sound range (TACZ default is 32 blocks in config)
-    private static final int TACZ_RANGE = 32;
-    
+
+    private DistantFireClientHandler() {
+    }
+
     public static void handleDistantFireSound(DistantFireSoundPacket packet) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player == null || mc.level == null) return;
-        
-        if (!Config.DistantFire.enabled) return;
-        
-        Vec3 playerPos = mc.player.position();
-        Vec3 soundPos = new Vec3(packet.x(), packet.y(), packet.z());
-        double distance = playerPos.distanceTo(soundPos);
-        
-        LOGGER.debug("[DistantFire] Received packet: caliber={}, distance={}", packet.caliberId(), distance);
-        
-        // Skip if within TACZ's normal range (TACZ handles it)
-        if (distance < TACZ_RANGE) {
-            LOGGER.debug("[DistantFire] Within TACZ range, skipping");
+        if (mc.player == null || mc.level == null) {
             return;
         }
-        
-        // Get config for this caliber
-        DistantFireSound config = DistantFireSoundManager.INSTANCE.getConfigForCaliber(packet.caliberId());
-        
-        // Get sound level and calculate volumes for crossfade
-        DistantFireSound.SoundLevel level = config.getSoundLevel(distance, TACZ_RANGE);
-        float[] crossfadeVolumes = config.getCrossfadeVolumes(distance, TACZ_RANGE);
-        
-        LOGGER.debug("[DistantFire] Level: {}, Crossfade volumes: [{}, {}]", level, crossfadeVolumes[0], crossfadeVolumes[1]);
-        
-        // Play main sound for current level
-        ResourceLocation mainSoundLoc = config.getSoundForDistance(distance, TACZ_RANGE);
-        if (mainSoundLoc != null && crossfadeVolumes[0] > 0.01f) {
-            float mainVolume = crossfadeVolumes[0] * packet.volume() * (float) Config.DistantFire.volumeMultiplier;
-            playSound(mc, mainSoundLoc, packet.x(), packet.y(), packet.z(), mainVolume, packet.pitch());
+
+        // Server already gated on Config.DistantFire.enabled before sending: if a
+        // packet arrived, the player must hear it. Don't second-guess via local flags
+        // (sync race, dedicated server without local config, etc.).
+        Vec3 shotPos = new Vec3(packet.x(), packet.y(), packet.z());
+        double distanceBlocks = mc.player.position().distanceTo(shotPos);
+        int propagationDelayTicks = ClientDistantFireSettings.propagationDelayTicks(distanceBlocks);
+
+        if (Config.debug) {
+            LOGGER.info("[DistantFire Client] play pos=({}, {}, {}) dist={} delayTicks={} primary={} vol={} secondary={} secondaryVol={} range={}",
+                packet.x(), packet.y(), packet.z(),
+                distanceBlocks, propagationDelayTicks,
+                packet.primarySound(), packet.primaryVolume(),
+                packet.secondarySound().orElse(null), packet.secondaryVolume(),
+                packet.soundRange());
         }
-        
-        // Play transition sound if in crossfade zone
-        if (crossfadeVolumes[1] > 0.01f) {
-            ResourceLocation nextSoundLoc = config.getNextSoundForCrossfade(distance, TACZ_RANGE);
-            if (nextSoundLoc != null) {
-                float nextVolume = crossfadeVolumes[1] * packet.volume() * (float) Config.DistantFire.volumeMultiplier;
-                playSound(mc, nextSoundLoc, packet.x(), packet.y(), packet.z(), nextVolume, packet.pitch());
-                LOGGER.debug("[DistantFire] Playing crossfade sound: {} at volume {}", nextSoundLoc, nextVolume);
+
+        if (packet.primaryVolume() > 0.01f) {
+            playSound(mc, packet.primarySound(),
+                packet.x(), packet.y(), packet.z(),
+                packet.primaryVolume(), packet.pitch(), packet.soundRange(), propagationDelayTicks);
+        }
+        packet.secondarySound().ifPresent(loc -> {
+            if (packet.secondaryVolume() > 0.01f) {
+                playSound(mc, loc,
+                    packet.x(), packet.y(), packet.z(),
+                    packet.secondaryVolume(), packet.pitch(), packet.soundRange(), propagationDelayTicks);
             }
-        }
+        });
     }
-    
-    private static void playSound(Minecraft mc, ResourceLocation soundLoc, double x, double y, double z, 
-                                   float volume, float pitch) {
+
+    /** Boost the server-resolved volume so distant fire stays audible against louder near-shot sounds. */
+    private static final float CLIENT_VOLUME_BOOST = 1.5f;
+
+    private static void playSound(Minecraft mc, ResourceLocation soundLoc, double x, double y, double z,
+                                   float volume, float pitch, float maxRange, int delayTicks) {
         SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.get(soundLoc);
-        
         if (soundEvent == null) {
-            // Create sound event dynamically
-            soundEvent = SoundEvent.createVariableRangeEvent(soundLoc);
+            // Sounds defined only in sounds.json are not in BuiltInRegistries; we still
+            // need a fixed range so vanilla doesn't auto-pick a tiny variable range
+            // (FilteredSoundInstance overrides attenuation to NONE anyway).
+            soundEvent = SoundEvent.createFixedRangeEvent(soundLoc, maxRange);
         }
-        
-        // Use FilteredSoundInstance for positional sound
+
+        float effectiveVolume = Math.min(1.0f, volume * CLIENT_VOLUME_BOOST);
+
         FilteredSoundInstance soundInstance = new FilteredSoundInstance(
             soundEvent,
             SoundSource.PLAYERS,
-            volume,
+            effectiveVolume,
             pitch,
             x, y, z,
-            0.0f // No muffling - just positional distant sound
+            0.0f,
+            delayTicks
         );
-        
+
         mc.getSoundManager().play(soundInstance);
-        LOGGER.debug("[DistantFire] Played sound: {} at volume {}", soundLoc, volume);
+
+        if (Config.debug) {
+            LOGGER.info("[DistantFire Client] dispatched sound={} vol={} (boosted from {}) range={} delayTicks={}",
+                soundLoc, effectiveVolume, volume, maxRange, delayTicks);
+        }
     }
 }

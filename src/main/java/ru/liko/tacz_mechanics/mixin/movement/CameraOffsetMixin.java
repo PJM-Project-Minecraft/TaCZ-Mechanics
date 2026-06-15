@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.liko.tacz_mechanics.Config;
+import ru.liko.tacz_mechanics.movement.MovementPosture;
 import ru.liko.tacz_mechanics.movement.MovementStateManager;
 import ru.liko.tacz_mechanics.movement.PlayerState;
 import ru.liko.tacz_mechanics.movement.client.MovementClientHandler;
@@ -32,24 +33,22 @@ public abstract class CameraOffsetMixin {
         if (!(entity instanceof Player)) return;
         if (detached) return;
         
-        double offsetX = 0, offsetY = 0, offsetZ = 0;
-        
-        // Apply vertical offset for sitting/crawling
+        // Pose offset (vertical for sit, vertical + forward for crawl) — shared with the eye/shooting
+        // origin so camera and eyes stay locked together and aligned to the posed model's head.
+        Vec3 poseOffset = Vec3.ZERO;
         if (entity instanceof Player player) {
             PlayerState state = MovementStateManager.get(player.getUUID());
-            if (state != null) {
-                if (state.isCrawling()) offsetY = Config.Movement.crawlYOffset;
-                else if (state.isSitting()) offsetY = Config.Movement.sitYOffset;
-            }
+            poseOffset = MovementPosture.cameraEyeOffset(player, state, partialTick);
         }
-        
+        double offsetX = poseOffset.x, offsetY = poseOffset.y, offsetZ = poseOffset.z;
+
         // Apply horizontal offset for leaning
         float probeOffset = MovementClientHandler.cameraProbeOffset;
         if (probeOffset != 0) {
             float yaw = entity.getYRot();
             double radians = Math.toRadians(yaw);
-            offsetX = -probeOffset * 0.6 * Math.cos(radians);
-            offsetZ = -probeOffset * 0.6 * Math.sin(radians);
+            offsetX += -probeOffset * 0.6 * Math.cos(radians);
+            offsetZ += -probeOffset * 0.6 * Math.sin(radians);
         }
         
         if (offsetX != 0 || offsetY != 0 || offsetZ != 0) {

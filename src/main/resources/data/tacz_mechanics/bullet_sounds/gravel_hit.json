@@ -1,0 +1,17 @@
+{
+  "type": "block",
+  "priority": 10,
+  "blocks": ["minecraft:gravel"],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.gravel",
+    "volume": 1.0,
+    "pitch": 1.0,
+    "range": 8.5
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.gravel",
+    "volume": 0.94,
+    "pitch": 0.98,
+    "range": 8.0
+  }
+}

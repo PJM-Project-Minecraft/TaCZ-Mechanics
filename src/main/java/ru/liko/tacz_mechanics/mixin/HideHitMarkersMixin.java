@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import ru.liko.tacz_mechanics.Config;
+import ru.liko.tacz_mechanics.client.ClientTweakSettings;
 
 /**
  * Mixin to hide hit markers based on config setting.
@@ -18,7 +18,7 @@ public abstract class HideHitMarkersMixin {
     
     @Inject(method = "renderHitMarker", at = @At("HEAD"), cancellable = true)
     private static void tacz_mechanics$hideHitMarker(GuiGraphics graphics, Window window, CallbackInfo ci) {
-        if (Config.Tweaks.hideHitMarkers) {
+        if (ClientTweakSettings.hideHitMarkers()) {
             ci.cancel();
         }
     }

@@ -1,0 +1,737 @@
+﻿{
+  "generic.ricochet_impact": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet_impact0" },
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet_impact1" },
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet_impact2" },
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet_impact3" }
+    ]
+  },
+  "generic.ricochet": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet0" },
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet1" },
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet2" },
+      { "type": "file", "name": "tacz_mechanics:ricochet/ricochet3" }
+    ]
+  },
+  "generic.hit.metal": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/metal1"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/metal2"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/metal3"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/metal4"
+      }
+    ]
+  },
+    "generic.hit.dirt": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt1"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt2"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt3"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt4"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt5"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt6"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt7"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/dirt8"
+      }
+    ]
+  },
+      "generic.hit.stone": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone1"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone2"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone3"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone4"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone5"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone6"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone7"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/stone8"
+      }
+    ]
+  },
+        "generic.hit.wood": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood1"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood2"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood3"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood4"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood5"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood6"
+      },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood7"
+        },
+            {
+        "type": "file",
+        "name": "tacz_mechanics:hit/wood8"
+            }
+    ]
+  },
+  "generic.hit.grass": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:hit/grass/hit01" },
+      { "type": "file", "name": "tacz_mechanics:hit/grass/hit02" },
+      { "type": "file", "name": "tacz_mechanics:hit/grass/hit03" },
+      { "type": "file", "name": "tacz_mechanics:hit/grass/hit04" },
+      { "type": "file", "name": "tacz_mechanics:hit/grass/hit05" }
+    ]
+  },
+  "generic.hit.sand": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit01" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit02" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit03" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit04" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit05" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit06" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit07" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit08" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit09" },
+      { "type": "file", "name": "tacz_mechanics:hit/sand/hit10" }
+    ]
+  },
+  "generic.hit.gravel": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:hit/gravel/hit01" },
+      { "type": "file", "name": "tacz_mechanics:hit/gravel/hit02" },
+      { "type": "file", "name": "tacz_mechanics:hit/gravel/hit03" },
+      { "type": "file", "name": "tacz_mechanics:hit/gravel/hit04" },
+      { "type": "file", "name": "tacz_mechanics:hit/gravel/hit05" },
+      { "type": "file", "name": "tacz_mechanics:hit/gravel/hit06" }
+    ]
+  },
+  "generic.hit.snow": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:hit/snow_hit1" },
+      { "type": "file", "name": "tacz_mechanics:hit/snow_hit2" },
+      { "type": "file", "name": "tacz_mechanics:hit/snow_hit3" },
+      { "type": "file", "name": "tacz_mechanics:hit/snow_hit4" },
+      { "type": "file", "name": "tacz_mechanics:hit/snow_hit5" }
+    ]
+  },
+  "generic.hit.glass": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:hit/glass/impact01" },
+      { "type": "file", "name": "tacz_mechanics:hit/glass/impact02" },
+      { "type": "file", "name": "tacz_mechanics:hit/glass/impact03" },
+      { "type": "file", "name": "tacz_mechanics:hit/glass/impact04" }
+    ]
+  },
+  "generic.hit.mud": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:hit/mud/impact01" },
+      { "type": "file", "name": "tacz_mechanics:hit/mud/impact02" },
+      { "type": "file", "name": "tacz_mechanics:hit/mud/impact03" },
+      { "type": "file", "name": "tacz_mechanics:hit/mud/impact04" }
+    ]
+  },
+  "generic.hit.metal_thick": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:hit/metal_thick/hit01" },
+      { "type": "file", "name": "tacz_mechanics:hit/metal_thick/hit02" },
+      { "type": "file", "name": "tacz_mechanics:hit/metal_thick/hit03" },
+      { "type": "file", "name": "tacz_mechanics:hit/metal_thick/hit04" },
+      { "type": "file", "name": "tacz_mechanics:hit/metal_thick/hit05" },
+      { "type": "file", "name": "tacz_mechanics:hit/metal_thick/hit06" },
+      { "type": "file", "name": "tacz_mechanics:hit/metal_thick/hit07" }
+    ]
+  },
+  "generic.whizz.near": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/near1"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/near2"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/near3"
+      }
+    ]
+  },
+  "generic.whizz.mid": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/mid1"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/mid2"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/mid3"
+      }
+    ]
+  },
+  "generic.whizz.far": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/far1"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/far2"
+      },
+      {
+        "type": "file",
+        "name": "tacz_mechanics:whizz/far3"
+      }
+    ]
+  },
+  "distant/close_distance": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:distant/7.62/close_distance"
+      }
+    ]
+  },
+  "distant/medium_distance": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:distant/7.62/medium_distance"
+      }
+    ]
+  },
+  "distant/far_distance": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:distant/7.62/far_distance"
+      }
+    ]
+  },
+  "distant/very_far_distance": {
+    "sounds": [
+      {
+        "type": "file",
+        "name": "tacz_mechanics:distant/7.62/very_far_distance"
+      }
+    ]
+  },
+  "distant/5.45x39mm/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/close_distance" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_4" }
+    ]
+  },
+  "distant/5.45x39mm/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_medium_distance_4" }
+    ]
+  },
+  "distant/5.45x39mm/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_556_far_distance_4" }
+    ]
+  },
+  "distant/5.45x39mm/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.45x39mm/ak_very_far_distance_5" }
+    ]
+  },
+  "distant/5.56x45mm/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/close_distance" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_4" }
+    ]
+  },
+  "distant/5.56x45mm/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_medium_distance_4" }
+    ]
+  },
+  "distant/5.56x45mm/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_556_far_distance_4" }
+    ]
+  },
+  "distant/5.56x45mm/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/5.56x45mm/ar_very_far_distance_5" }
+    ]
+  },
+  "distant/7.62x39mm/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/close_distance" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_4" }
+    ]
+  },
+  "distant/7.62x39mm/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_medium_distance_4" }
+    ]
+  },
+  "distant/7.62x39mm/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_762_far_distance_4" }
+    ]
+  },
+  "distant/7.62x39mm/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62/ak_very_far_distance_5" }
+    ]
+  },
+  "distant/7.62x51mm/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/close_distance" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/battle_rifle_762_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/battle_rifle_762_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/battle_rifle_762_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/battle_rifle_762_medium_distance_4" }
+    ]
+  },
+  "distant/7.62x51mm/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_medium_distance_4" }
+    ]
+  },
+  "distant/7.62x51mm/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_far_distance_4" }
+    ]
+  },
+  "distant/7.62x51mm/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/dmr_very_far_distance_5" }
+    ]
+  },
+  "distant/338lapua/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/close_distance", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/close_distance", "pitch": 0.92 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/close_distance", "pitch": 0.98 }
+    ]
+  },
+  "distant/338lapua/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/medium_distance", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/medium_distance", "pitch": 0.92 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/medium_distance", "pitch": 0.98 }
+    ]
+  },
+  "distant/338lapua/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/far_distance", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/far_distance", "pitch": 0.92 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/far_distance", "pitch": 0.98 }
+    ]
+  },
+  "distant/338lapua/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/very_far_distance", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/very_far_distance", "pitch": 0.92 },
+      { "type": "file", "name": "tacz_mechanics:distant/338lapua/very_far_distance", "pitch": 0.98 }
+    ]
+  },
+  "distant/12.7x99mm/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/close_distance" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_m2_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_m2_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_m2_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_m2_medium_distance_4" }
+    ]
+  },
+  "distant/12.7x99mm/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_dshk_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_dshk_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_dshk_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_dshk_medium_distance_4" }
+    ]
+  },
+  "distant/12.7x99mm/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_m2_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_m2_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_dshk_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_dshk_far_distance_2" }
+    ]
+  },
+  "distant/12.7x99mm/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/12.7x99mm/hmg_very_far_distance_5" }
+    ]
+  },
+  "distant/9x19mm/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_medium_distance_4" }
+    ]
+  },
+  "distant/9x19mm/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_9_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_9_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_9_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_9_medium_distance_4" }
+    ]
+  },
+  "distant/9x19mm/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_9_far_distance_4" }
+    ]
+  },
+  "distant/9x19mm/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/smg/smg_very_far_distance_5" }
+    ]
+  },
+  "distant/45acp/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_4" }
+    ]
+  },
+  "distant/45acp/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_medium_distance_4" }
+    ]
+  },
+  "distant/45acp/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_45_far_distance_4" }
+    ]
+  },
+  "distant/45acp/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/45acp/pistol_very_far_distance_5" }
+    ]
+  },
+  "distant/762x54mmr/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/close_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/close_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/close_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/762x54mmr/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/medium_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/medium_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/medium_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/762x54mmr/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/far_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/far_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/far_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/762x54mmr/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/very_far_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/very_far_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/7.62x51mm/very_far_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/30-06/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/close_distance" },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/medium_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/medium_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/30-06/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/medium_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/medium_distance", "pitch": 1.0 },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/medium_distance", "pitch": 1.05 }
+    ]
+  },
+  "distant/30-06/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/far_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/far_distance", "pitch": 1.0 },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/far_distance", "pitch": 1.05 }
+    ]
+  },
+  "distant/30-06/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/very_far_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/very_far_distance", "pitch": 1.0 },
+      { "type": "file", "name": "tacz_mechanics:distant/30-06/very_far_distance", "pitch": 1.05 }
+    ]
+  },
+  "distant/65creedmoor/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_4" }
+    ]
+  },
+  "distant/65creedmoor/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_medium_distance_4" }
+    ]
+  },
+  "distant/65creedmoor/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/rifle_65_far_distance_4" }
+    ]
+  },
+  "distant/65creedmoor/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/dmr_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/dmr_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/dmr_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/dmr_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/65creedmoor/dmr_very_far_distance_5" }
+    ]
+  },
+  "distant/12gauge/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/close_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/close_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/close_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/12gauge/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/close_distance", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/close_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/close_distance", "pitch": 0.95 }
+    ]
+  },
+  "distant/12gauge/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/very_far_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/very_far_distance", "pitch": 1.0 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/very_far_distance", "pitch": 1.05 }
+    ]
+  },
+  "distant/12gauge/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/very_far_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/very_far_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/12gauge/very_far_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/revolver/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/revolver/close_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/revolver/close_distance", "pitch": 0.95 },
+      { "type": "file", "name": "tacz_mechanics:distant/revolver/close_distance", "pitch": 1.0 }
+    ]
+  },
+  "distant/revolver/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/revolver/close_distance", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/revolver/close_distance", "pitch": 0.9 },
+      { "type": "file", "name": "tacz_mechanics:distant/revolver/close_distance", "pitch": 0.95 }
+    ]
+  },
+  "distant/revolver/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_very_far_distance_1", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_very_far_distance_2", "pitch": 0.85 },
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_very_far_distance_3", "pitch": 0.85 }
+    ]
+  },
+  "distant/revolver/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_very_far_distance_1", "pitch": 0.8 },
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_very_far_distance_2", "pitch": 0.8 },
+      { "type": "file", "name": "tacz_mechanics:distant/9x19mm/pistol_very_far_distance_3", "pitch": 0.8 }
+    ]
+  },
+  "distant/lmg/close": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_556_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_556_medium_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_762_medium_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_762_medium_distance_2" }
+    ]
+  },
+  "distant/lmg/mid": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_556_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_556_medium_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_762_medium_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_762_medium_distance_4" }
+    ]
+  },
+  "distant/lmg/far": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_556_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_556_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_762_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_762_far_distance_2" }
+    ]
+  },
+  "distant/lmg/veryfar": {
+    "sounds": [
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_very_far_distance_1" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_very_far_distance_2" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_very_far_distance_3" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_very_far_distance_4" },
+      { "type": "file", "name": "tacz_mechanics:distant/lmg/lmg_very_far_distance_5" }
+    ]
+  }
+}

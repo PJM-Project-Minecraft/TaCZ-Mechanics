@@ -150,7 +150,7 @@ Create custom configs in your resource pack:
 
 - Minecraft 1.21.1
 - NeoForge 21.1.x
-- [TaCZ (Timeless and Classics Zero)](https://modrinth.com/mod/tacz)
+- [TaCZ (Timeless and Classics Zero)](https://www.curseforge.com/minecraft/mc-mods/tacz-1-21-1)
 
 ## Building
 

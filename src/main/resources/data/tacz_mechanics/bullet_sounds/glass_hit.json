@@ -1,0 +1,17 @@
+{
+  "type": "block",
+  "priority": 10,
+  "blocks": ["#minecraft:glass_blocks"],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.glass",
+    "volume": 1.05,
+    "pitch": 1.15,
+    "range": 9.0
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.glass",
+    "volume": 0.92,
+    "pitch": 1.1,
+    "range": 8.5
+  }
+}

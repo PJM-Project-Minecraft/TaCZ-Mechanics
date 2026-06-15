@@ -1,0 +1,17 @@
+{
+  "type": "block",
+  "priority": 10,
+  "blocks": ["minecraft:sand", "minecraft:red_sand"],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.sand",
+    "volume": 1.0,
+    "pitch": 0.98,
+    "range": 8.5
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.sand",
+    "volume": 0.95,
+    "pitch": 0.96,
+    "range": 8.0
+  }
+}

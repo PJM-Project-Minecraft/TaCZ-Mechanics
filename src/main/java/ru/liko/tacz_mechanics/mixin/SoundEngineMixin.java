@@ -19,6 +19,9 @@ import java.util.Map;
 public class SoundEngineMixin {
     private static Field channelsField;
     private static boolean fieldSearched = false;
+    private static int tacz_mechanics$tickCounter = 0;
+    /** How often (in SoundEngine ticks) we sweep stale entries from {@link SoundSourceTracker}. */
+    private static final int TACZ_MECHANICS_PRUNE_INTERVAL = 100;
 
     private static Field findChannelsField() {
         if (fieldSearched) return channelsField;
@@ -85,5 +88,25 @@ public class SoundEngineMixin {
     @Inject(method = "stop(Lnet/minecraft/client/resources/sounds/SoundInstance;)V", at = @At("HEAD"))
     private void tacz_mechanics$cleanupTracking(SoundInstance instance, CallbackInfo ci) {
         SoundSourceTracker.remove(instance);
+    }
+
+    @Inject(method = "tick(Z)V", at = @At("TAIL"))
+    private void tacz_mechanics$pruneTracking(boolean paused, CallbackInfo ci) {
+        if (++tacz_mechanics$tickCounter < TACZ_MECHANICS_PRUNE_INTERVAL) {
+            return;
+        }
+        tacz_mechanics$tickCounter = 0;
+
+        try {
+            Field field = findChannelsField();
+            if (field == null) return;
+
+            @SuppressWarnings("unchecked")
+            Map<SoundInstance, ?> map = (Map<SoundInstance, ?>) field.get(this);
+            if (map == null) return;
+
+            SoundSourceTracker.retainOnly(map.keySet());
+        } catch (Exception ignored) {
+        }
     }
 }

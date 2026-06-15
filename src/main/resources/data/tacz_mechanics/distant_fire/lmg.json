@@ -1,0 +1,9 @@
+{
+  "caliber_id": "tacz:lmg",
+  "layers": [
+    { "sound": "tacz_mechanics:distant/lmg/close",   "volume": 1.0 },
+    { "sound": "tacz_mechanics:distant/lmg/mid",     "volume": 1.2 },
+    { "sound": "tacz_mechanics:distant/lmg/far",     "volume": 1.4 },
+    { "sound": "tacz_mechanics:distant/lmg/veryfar", "volume": 1.6 }
+  ]
+}

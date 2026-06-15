@@ -5,6 +5,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -67,6 +68,19 @@ public class SoundSourceTracker {
 
     public static void remove(SoundInstance instance) {
         sourceMap.remove(instance);
+    }
+
+    /**
+     * Drop tracked source IDs for any instance that is no longer present in {@code activeInstances}.
+     * Vanilla {@link net.minecraft.client.sounds.SoundEngine} reclaims channels for naturally-finished
+     * sounds without calling {@code stop(SoundInstance)}, so without this sweep the map would grow
+     * forever and keep handing out stale OpenAL source IDs that may now belong to other sounds.
+     */
+    public static void retainOnly(Set<SoundInstance> activeInstances) {
+        if (sourceMap.isEmpty()) {
+            return;
+        }
+        sourceMap.keySet().removeIf(k -> !activeInstances.contains(k));
     }
 
     public static void cleanup() {

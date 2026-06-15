@@ -1,0 +1,26 @@
+{
+  "type": "block",
+  "priority": 60,
+  "blocks": [
+    "minecraft:dirt",
+    "minecraft:coarse_dirt",
+    "minecraft:rooted_dirt",
+    "minecraft:podzol",
+    "minecraft:mycelium",
+    "minecraft:moss_block",
+    "minecraft:farmland",
+    "minecraft:soul_soil",
+    "minecraft:soul_sand",
+    "minecraft:clay",
+    "minecraft:crimson_nylium",
+    "minecraft:warped_nylium"
+  ],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.dirt",
+    "range": 8.0
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.dirt",
+    "range": 8.0
+  }
+}

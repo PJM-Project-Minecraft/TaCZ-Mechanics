@@ -1,0 +1,17 @@
+{
+  "type": "block",
+  "priority": 10,
+  "blocks": ["minecraft:snow_block", "minecraft:powder_snow"],
+  "hit": {
+    "sound": "tacz_mechanics:generic.hit.snow",
+    "volume": 0.85,
+    "pitch": 1.12,
+    "range": 7.5
+  },
+  "pierce": {
+    "sound": "tacz_mechanics:generic.hit.snow",
+    "volume": 0.8,
+    "pitch": 1.08,
+    "range": 7.0
+  }
+}

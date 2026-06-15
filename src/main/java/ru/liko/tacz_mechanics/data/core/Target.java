@@ -135,7 +135,15 @@ public sealed interface Target permits Target.AllOf, Target.AnyOf, Target.Invert
             if (ammoId == null) {
                 return false;
             }
-            return values.contains(ammoId);
+            if (values.contains(ammoId)) return true;
+            // Flexible match: tacz:ammo/9x19mm matches tacz:9x19mm
+            String fullPath = ammoId.getPath();
+            final String path = fullPath.contains("/") ? fullPath.substring(fullPath.lastIndexOf('/') + 1) : fullPath;
+            final String pathNorm = path.replace('-', '_');
+            return values.stream().anyMatch(v -> {
+                String vPath = v.getPath().contains("/") ? v.getPath().substring(v.getPath().lastIndexOf('/') + 1) : v.getPath();
+                return vPath.equals(path) || vPath.replace('-', '_').equals(pathNorm);
+            });
         }
         
         @Override
