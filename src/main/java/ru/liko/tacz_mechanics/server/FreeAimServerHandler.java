@@ -68,24 +68,18 @@ public class FreeAimServerHandler {
         return data.yawOffset;
     }
     
-    // Sensitivity multipliers - must match FreeAimGunModelMixin for visual accuracy
-    private static final float PITCH_SENSITIVITY = 0.5f;
-    private static final float YAW_SENSITIVITY = 0.4f;
-    
     /**
-     * Get adjusted pitch for a player (player pitch + free aim offset).
-     * Uses negative offset and sensitivity to match visual gun rotation.
+     * Adjusted pitch = base pitch minus free-aim offset (offset is the real barrel deviation).
      */
     public static float getAdjustedPitch(ServerPlayer player, float basePitch) {
-        return basePitch - getPitchOffset(player) * PITCH_SENSITIVITY;
+        return basePitch - getPitchOffset(player);
     }
-    
+
     /**
-     * Get adjusted yaw for a player (player yaw + free aim offset).
-     * Uses sensitivity to match visual gun rotation.
+     * Adjusted yaw = base yaw plus free-aim offset.
      */
     public static float getAdjustedYaw(ServerPlayer player, float baseYaw) {
-        return baseYaw + getYawOffset(player) * YAW_SENSITIVITY;
+        return baseYaw + getYawOffset(player);
     }
     
     /**
