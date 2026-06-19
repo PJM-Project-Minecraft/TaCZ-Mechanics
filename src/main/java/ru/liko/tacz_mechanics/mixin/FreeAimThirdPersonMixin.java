@@ -3,6 +3,7 @@ package ru.liko.tacz_mechanics.mixin;
 import com.tacz.guns.client.animation.third.InnerThirdPersonManager;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.LivingEntity;
+import java.util.UUID;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,8 +25,9 @@ public class FreeAimThirdPersonMixin {
         if (!Config.FreeAim.enabled || !Config.FreeAim.thirdPersonEnabled || entityIn == null) {
             return;
         }
-        float pitch = FreeAimClientCache.getPitch(entityIn.getUUID());
-        float yaw = FreeAimClientCache.getYaw(entityIn.getUUID());
+        UUID uuid = entityIn.getUUID();
+        float pitch = FreeAimClientCache.getPitch(uuid);
+        float yaw = FreeAimClientCache.getYaw(uuid);
         if (Math.abs(pitch) < 0.001f && Math.abs(yaw) < 0.001f) {
             return;
         }
