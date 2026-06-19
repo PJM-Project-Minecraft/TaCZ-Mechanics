@@ -60,6 +60,18 @@ class SwaySpringTest {
     }
 
     @Test
+    void clampGuaranteesStabilityAtConfigMaxParams() {
+        SwaySpring s = new SwaySpring();
+        s.setParams(1.0f, 2.0f, 4f); // config maximums
+        s.addImpulse(50f);
+        for (int i = 0; i < 500; i++) {
+            s.update(1f);
+            assertTrue(Math.abs(s.getValue()) <= 4f + 1e-3f,
+                    "value must stay within clamp bounds at config extremes, was " + s.getValue());
+        }
+    }
+
+    @Test
     void resetZeroesEverything() {
         SwaySpring s = new SwaySpring();
         s.setParams(0.2f, 0.5f, 10f);

@@ -2,7 +2,11 @@ package ru.liko.tacz_mechanics.server;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import ru.liko.tacz_mechanics.Config;
+import ru.liko.tacz_mechanics.TaczMechanics;
 
 import java.util.Map;
 import java.util.UUID;
@@ -12,11 +16,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * Server-side handler for free aim state.
  * Stores and provides free aim offsets for each player.
  */
+@EventBusSubscriber(modid = TaczMechanics.MODID)
 public class FreeAimServerHandler {
     
     // Store free aim offsets per player UUID
     private static final Map<UUID, FreeAimData> PLAYER_FREE_AIM = new ConcurrentHashMap<>();
-    
+
+    @SubscribeEvent
+    public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            removePlayer(player);
+        }
+    }
+
     /**
      * Update a player's free aim offset.
      * Called when receiving FreeAimSyncPacket from client.

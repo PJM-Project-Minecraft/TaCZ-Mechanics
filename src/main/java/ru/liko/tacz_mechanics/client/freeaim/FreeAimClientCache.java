@@ -40,4 +40,8 @@ public final class FreeAimClientCache {
     public static void remove(UUID id) {
         OFFSETS.remove(id);
     }
+
+    public static void clear() {
+        OFFSETS.clear();
+    }
 }

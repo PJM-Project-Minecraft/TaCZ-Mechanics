@@ -8,6 +8,7 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import ru.liko.tacz_mechanics.Config;
 import ru.liko.tacz_mechanics.TaczMechanics;
+import ru.liko.tacz_mechanics.client.freeaim.FreeAimClientCache;
 import ru.liko.tacz_mechanics.client.freeaim.FreeAimHandler;
 import ru.liko.tacz_mechanics.client.sound.SoundFilterRegistry;
 import ru.liko.tacz_mechanics.client.sound.SoundSourceTracker;
@@ -40,5 +41,6 @@ public class ClientEvents {
         ClientDistantFireSettings.applyFromLocalConfig();
         SoundFilterRegistry.cleanup();
         SoundSourceTracker.cleanup();
+        FreeAimClientCache.clear();
     }
 }
