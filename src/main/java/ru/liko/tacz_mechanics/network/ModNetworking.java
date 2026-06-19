@@ -50,6 +50,11 @@ public class ModNetworking {
                 FreeAimSyncPacket.STREAM_CODEC,
                 FreeAimSyncPacket::handle);
 
+        registrar.playToClient(
+                FreeAimBroadcastPacket.TYPE,
+                FreeAimBroadcastPacket.STREAM_CODEC,
+                FreeAimBroadcastPacket::handle);
+
         registrar.playBidirectional(
                 MovementStatePayload.TYPE,
                 MovementStatePayload.STREAM_CODEC,

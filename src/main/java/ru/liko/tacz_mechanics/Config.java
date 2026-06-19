@@ -384,6 +384,9 @@ public class Config {
         private static final ModConfigSpec.DoubleValue MOVEMENT_JUMP_SCALE = SERVER_BUILDER
                 .comment("Sway impulse on jump/land")
                 .defineInRange("freeAim.movement.jumpScale", 1.2, 0.0, 10.0);
+        private static final ModConfigSpec.BooleanValue THIRD_PERSON_ENABLED = SERVER_BUILDER
+                .comment("Show free-aim gun sway on other players / third-person model")
+                .define("freeAim.thirdPerson.enabled", true);
 
         public static boolean enabled;
         public static double maxAngle;
@@ -399,6 +402,7 @@ public class Config {
         public static double movementWalkScale;
         public static double movementSprintScale;
         public static double movementJumpScale;
+        public static boolean thirdPersonEnabled;
 
         private static void load() {
             enabled = ENABLED.get();
@@ -415,6 +419,7 @@ public class Config {
             movementWalkScale = MOVEMENT_WALK_SCALE.get();
             movementSprintScale = MOVEMENT_SPRINT_SCALE.get();
             movementJumpScale = MOVEMENT_JUMP_SCALE.get();
+            thirdPersonEnabled = THIRD_PERSON_ENABLED.get();
         }
 
         static void init() {

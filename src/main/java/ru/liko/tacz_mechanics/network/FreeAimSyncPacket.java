@@ -5,8 +5,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import ru.liko.tacz_mechanics.Config;
 import ru.liko.tacz_mechanics.TaczMechanics;
 import ru.liko.tacz_mechanics.server.FreeAimServerHandler;
 
@@ -48,6 +50,10 @@ public record FreeAimSyncPacket(
         context.enqueueWork(() -> {
             if (context.player() instanceof ServerPlayer serverPlayer) {
                 FreeAimServerHandler.updatePlayerFreeAim(serverPlayer, packet.pitchOffset(), packet.yawOffset());
+                if (Config.FreeAim.thirdPersonEnabled) {
+                    PacketDistributor.sendToPlayersTrackingEntity(serverPlayer,
+                            new FreeAimBroadcastPacket(serverPlayer.getUUID(), packet.pitchOffset(), packet.yawOffset()));
+                }
             }
         });
     }
