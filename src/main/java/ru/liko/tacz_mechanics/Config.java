@@ -343,19 +343,25 @@ public class Config {
 
     public static final class FreeAim {
         private static final ModConfigSpec.BooleanValue ENABLED = SERVER_BUILDER
-                .comment("Enable free aim - gun direction lags behind camera movement")
+                .comment("Enable free aim - gun sways with spring physics behind camera/movement/recoil")
                 .define("freeAim.enabled", true);
         private static final ModConfigSpec.DoubleValue MAX_ANGLE = SERVER_BUILDER
-                .comment("Maximum angle (degrees) the gun can deviate from view direction")
-                .defineInRange("freeAim.maxAngle", 2.5, 0.5, 25.0);
-        private static final ModConfigSpec.DoubleValue LERP_SPEED = SERVER_BUILDER
-                .comment("Speed at which the gun catches up to view direction (0.0-1.0, higher = faster)")
-                .defineInRange("freeAim.lerpSpeed", 0.15, 0.01, 1.0);
-        private static final ModConfigSpec.BooleanValue DISABLE_WHEN_AIMING = SERVER_BUILDER
-                .comment("Disable free aim when aiming down sights")
-                .define("freeAim.disableWhenAiming", true);
+                .comment("Maximum angle (degrees) the gun barrel can deviate from view direction")
+                .defineInRange("freeAim.maxAngle", 4.0, 0.5, 25.0);
+        private static final ModConfigSpec.DoubleValue STIFFNESS = SERVER_BUILDER
+                .comment("Spring stiffness - how strongly the gun is pulled back to center (higher = snappier)")
+                .defineInRange("freeAim.spring.stiffness", 0.25, 0.01, 1.0);
+        private static final ModConfigSpec.DoubleValue DAMPING = SERVER_BUILDER
+                .comment("Spring damping - resistance to motion (higher = less overshoot/wobble)")
+                .defineInRange("freeAim.spring.damping", 0.55, 0.05, 2.0);
+        private static final ModConfigSpec.DoubleValue LOOK_SENSITIVITY = SERVER_BUILDER
+                .comment("How strongly camera rotation pushes the gun (impulse per degree turned)")
+                .defineInRange("freeAim.look.sensitivity", 0.6, 0.0, 5.0);
+        private static final ModConfigSpec.DoubleValue ADS_MULTIPLIER = SERVER_BUILDER
+                .comment("Sway multiplier while aiming down sights (0 = no sway in ADS, 1 = full)")
+                .defineInRange("freeAim.adsMultiplier", 0.35, 0.0, 1.0);
         private static final ModConfigSpec.DoubleValue CROSSHAIR_SCALE = SERVER_BUILDER
-                .comment("Scale factor for converting free aim angle to screen pixels")
+                .comment("Scale factor for converting free aim angle to crosshair screen pixels")
                 .defineInRange("freeAim.crosshairScale", 10.0, 1.0, 50.0);
         private static final ModConfigSpec.BooleanValue DISABLE_CROSSHAIR_MOVEMENT = SERVER_BUILDER
                 .comment("Disable crosshair movement with free aim (crosshair stays centered)")
@@ -363,16 +369,20 @@ public class Config {
 
         public static boolean enabled;
         public static double maxAngle;
-        public static double lerpSpeed;
-        public static boolean disableWhenAiming;
+        public static double stiffness;
+        public static double damping;
+        public static double lookSensitivity;
+        public static double adsMultiplier;
         public static double crosshairScale;
         public static boolean disableCrosshairMovement;
 
         private static void load() {
             enabled = ENABLED.get();
             maxAngle = MAX_ANGLE.get();
-            lerpSpeed = LERP_SPEED.get();
-            disableWhenAiming = DISABLE_WHEN_AIMING.get();
+            stiffness = STIFFNESS.get();
+            damping = DAMPING.get();
+            lookSensitivity = LOOK_SENSITIVITY.get();
+            adsMultiplier = ADS_MULTIPLIER.get();
             crosshairScale = CROSSHAIR_SCALE.get();
             disableCrosshairMovement = DISABLE_CROSSHAIR_MOVEMENT.get();
         }
