@@ -23,6 +23,7 @@
     "HideGunCrosshairMixin",
     "FreeAimCrosshairMixin",
     "FreeAimGunModelMixin",
+    "FreeAimThirdPersonMixin",
     "PostChainAccessor",
     "SuppressionGameRendererMixin",
     "SuppressionCameraShakeMixin",
