@@ -372,6 +372,18 @@ public class Config {
         private static final ModConfigSpec.DoubleValue RECOIL_SCALE = SERVER_BUILDER
                 .comment("Strength of the recoil sway impulse (degrees of velocity per shot)")
                 .defineInRange("freeAim.recoil.scale", 0.8, 0.0, 10.0);
+        private static final ModConfigSpec.BooleanValue MOVEMENT_ENABLED = SERVER_BUILDER
+                .comment("Add gun sway from walking/sprinting/jumping")
+                .define("freeAim.movement.enabled", true);
+        private static final ModConfigSpec.DoubleValue MOVEMENT_WALK_SCALE = SERVER_BUILDER
+                .comment("Sway amplitude while walking")
+                .defineInRange("freeAim.movement.walkScale", 0.15, 0.0, 5.0);
+        private static final ModConfigSpec.DoubleValue MOVEMENT_SPRINT_SCALE = SERVER_BUILDER
+                .comment("Sway amplitude while sprinting")
+                .defineInRange("freeAim.movement.sprintScale", 0.35, 0.0, 5.0);
+        private static final ModConfigSpec.DoubleValue MOVEMENT_JUMP_SCALE = SERVER_BUILDER
+                .comment("Sway impulse on jump/land")
+                .defineInRange("freeAim.movement.jumpScale", 1.2, 0.0, 10.0);
 
         public static boolean enabled;
         public static double maxAngle;
@@ -383,6 +395,10 @@ public class Config {
         public static boolean disableCrosshairMovement;
         public static boolean recoilEnabled;
         public static double recoilScale;
+        public static boolean movementEnabled;
+        public static double movementWalkScale;
+        public static double movementSprintScale;
+        public static double movementJumpScale;
 
         private static void load() {
             enabled = ENABLED.get();
@@ -395,6 +411,10 @@ public class Config {
             disableCrosshairMovement = DISABLE_CROSSHAIR_MOVEMENT.get();
             recoilEnabled = RECOIL_ENABLED.get();
             recoilScale = RECOIL_SCALE.get();
+            movementEnabled = MOVEMENT_ENABLED.get();
+            movementWalkScale = MOVEMENT_WALK_SCALE.get();
+            movementSprintScale = MOVEMENT_SPRINT_SCALE.get();
+            movementJumpScale = MOVEMENT_JUMP_SCALE.get();
         }
 
         static void init() {

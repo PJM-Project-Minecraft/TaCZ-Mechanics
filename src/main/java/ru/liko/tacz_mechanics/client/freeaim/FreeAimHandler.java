@@ -21,6 +21,7 @@ public class FreeAimHandler {
 
     private final SwaySpring pitchSpring = new SwaySpring();
     private final SwaySpring yawSpring = new SwaySpring();
+    private final MovementSource movementSource = new MovementSource();
 
     // Previous player rotation (for look-delta source)
     private float lastPitch = Float.NaN;
@@ -72,6 +73,9 @@ public class FreeAimHandler {
         // Gun lags behind: impulse opposite to camera movement
         pitchSpring.addImpulse(-deltaPitch * lookSens);
         yawSpring.addImpulse(-deltaYaw * lookSens);
+
+        // === Source: movement ===
+        movementSource.apply(player, pitchSpring, yawSpring);
 
         // === Source: recoil (queued by RecoilSource) ===
         if (pendingRecoilPitch != 0f || pendingRecoilYaw != 0f) {
@@ -163,5 +167,6 @@ public class FreeAimHandler {
         pendingRecoilPitch = 0f;
         pendingRecoilYaw = 0f;
         syncTimer = 0;
+        movementSource.reset();
     }
 }
