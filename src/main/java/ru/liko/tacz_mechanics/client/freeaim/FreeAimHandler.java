@@ -162,5 +162,6 @@ public class FreeAimHandler {
         lastYaw = Float.NaN;
         pendingRecoilPitch = 0f;
         pendingRecoilYaw = 0f;
+        syncTimer = 0;
     }
 }
