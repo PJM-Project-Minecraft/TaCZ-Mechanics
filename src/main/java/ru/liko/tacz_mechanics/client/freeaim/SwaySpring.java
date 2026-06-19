@@ -29,12 +29,14 @@ public final class SwaySpring {
         float accel = -stiffness * position - damping * velocity;
         velocity += accel * dt;
         position += velocity * dt;
+        // Hard wall: absorb velocity at the boundary (perfectly inelastic).
+        // Required so a clamped axis cannot punch through on the next opposing impulse.
         if (position > maxAngle) {
             position = maxAngle;
-            velocity = 0;
+            velocity = 0f;
         } else if (position < -maxAngle) {
             position = -maxAngle;
-            velocity = 0;
+            velocity = 0f;
         }
     }
 
