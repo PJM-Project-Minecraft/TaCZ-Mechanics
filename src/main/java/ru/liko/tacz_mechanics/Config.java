@@ -366,6 +366,12 @@ public class Config {
         private static final ModConfigSpec.BooleanValue DISABLE_CROSSHAIR_MOVEMENT = SERVER_BUILDER
                 .comment("Disable crosshair movement with free aim (crosshair stays centered)")
                 .define("freeAim.disableCrosshairMovement", false);
+        private static final ModConfigSpec.BooleanValue RECOIL_ENABLED = SERVER_BUILDER
+                .comment("Add an upward sway kick to the gun model on each shot")
+                .define("freeAim.recoil.enabled", true);
+        private static final ModConfigSpec.DoubleValue RECOIL_SCALE = SERVER_BUILDER
+                .comment("Strength of the recoil sway impulse (degrees of velocity per shot)")
+                .defineInRange("freeAim.recoil.scale", 0.8, 0.0, 10.0);
 
         public static boolean enabled;
         public static double maxAngle;
@@ -375,6 +381,8 @@ public class Config {
         public static double adsMultiplier;
         public static double crosshairScale;
         public static boolean disableCrosshairMovement;
+        public static boolean recoilEnabled;
+        public static double recoilScale;
 
         private static void load() {
             enabled = ENABLED.get();
@@ -385,6 +393,8 @@ public class Config {
             adsMultiplier = ADS_MULTIPLIER.get();
             crosshairScale = CROSSHAIR_SCALE.get();
             disableCrosshairMovement = DISABLE_CROSSHAIR_MOVEMENT.get();
+            recoilEnabled = RECOIL_ENABLED.get();
+            recoilScale = RECOIL_SCALE.get();
         }
 
         static void init() {
