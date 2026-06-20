@@ -26,7 +26,7 @@ public class FreeAimGunModelMixin {
     @Unique
     private static boolean taczMechanics$pushed;
 
-    @Inject(method = "renderFirstPerson", at = @At("HEAD"), require = 0)
+    @Inject(method = "renderFirstPersonInner", at = @At("HEAD"), require = 0)
     private void taczMechanics$pushAndRotate(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx,
                                                PoseStack poseStack, MultiBufferSource bufferSource,
                                                int light, float partialTick, CallbackInfo ci) {
@@ -59,7 +59,7 @@ public class FreeAimGunModelMixin {
         }
     }
 
-    @Inject(method = "renderFirstPerson", at = @At("TAIL"), require = 0)
+    @Inject(method = "renderFirstPersonInner", at = @At("TAIL"), require = 0)
     private void taczMechanics$popPose(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx,
                                         PoseStack poseStack, MultiBufferSource bufferSource,
                                         int light, float partialTick, CallbackInfo ci) {
