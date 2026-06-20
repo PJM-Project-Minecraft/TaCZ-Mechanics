@@ -446,82 +446,37 @@ public class Config {
 
     public static final class Movement {
         private static final ModConfigSpec.BooleanValue ENABLED = SERVER_BUILDER
-                .comment("Enable advanced movement mechanics (sitting, crawling, leaning, sliding)")
+                .comment("Enable advanced movement mechanics (leaning).",
+                        "Включить продвинутую механику движения (наклон).")
                 .define("movement.enabled", true);
-        private static final ModConfigSpec.BooleanValue SIT_ENABLED = SERVER_BUILDER
-                .comment("Enable sitting/crouching pose")
-                .define("movement.sitEnabled", true);
-        private static final ModConfigSpec.BooleanValue CRAWL_ENABLED = SERVER_BUILDER
-                .comment("Enable crawling/prone pose")
-                .define("movement.crawlEnabled", true);
-        private static final ModConfigSpec.BooleanValue SLIDE_ENABLED = SERVER_BUILDER
-                .comment("Enable sliding when sprinting + sit key")
-                .define("movement.slideEnabled", true);
-        private static final ModConfigSpec.DoubleValue SLIDE_MAX_FORCE = SERVER_BUILDER
-                .comment("Maximum sliding force")
-                .defineInRange("movement.slideMaxForce", 1.0, 0.1, 3.0);
         private static final ModConfigSpec.BooleanValue LEAN_AUTO_HOLD = SERVER_BUILDER
-                .comment("Auto-hold lean position (toggle mode)")
+                .comment("Auto-hold lean position (toggle mode): tap to lean and stay, tap again to return.",
+                        "Удерживать наклон автоматически (режим переключения): нажал — наклонился и держишь, нажал снова — вернулся.")
                 .define("movement.leanAutoHold", false);
         private static final ModConfigSpec.BooleanValue LEAN_MOUSE_CORRECTION = SERVER_BUILDER
-                .comment("Correct mouse input when leaning")
+                .comment("Correct mouse input while leaning so the crosshair stays on target.",
+                        "Корректировать ввод мыши при наклоне, чтобы прицел оставался на цели.")
                 .define("movement.leanMouseCorrection", true);
-        private static final ModConfigSpec.BooleanValue CRAWL_BLOCK_VIEW = SERVER_BUILDER
-                .comment("Limit view angle when crawling")
-                .define("movement.crawlBlockView", true);
-        private static final ModConfigSpec.DoubleValue CRAWL_BLOCK_ANGLE = SERVER_BUILDER
-                .comment("Maximum view angle when crawling (in degrees)")
-                .defineInRange("movement.crawlBlockAngle", 90.0, 30.0, 180.0);
-        private static final ModConfigSpec.DoubleValue SIT_COOLDOWN = SERVER_BUILDER
-                .comment("Cooldown between sit actions (seconds)")
-                .defineInRange("movement.sitCooldown", 0.75, 0.0, 5.0);
-        private static final ModConfigSpec.DoubleValue CRAWL_COOLDOWN = SERVER_BUILDER
-                .comment("Cooldown between crawl actions (seconds)")
-                .defineInRange("movement.crawlCooldown", 0.75, 0.0, 5.0);
         private static final ModConfigSpec.DoubleValue LEAN_COOLDOWN = SERVER_BUILDER
-                .comment("Cooldown between lean actions (seconds)")
+                .comment("Cooldown between lean actions (seconds).",
+                        "Задержка между действиями наклона (секунды).")
                 .defineInRange("movement.leanCooldown", 0.0, 0.0, 5.0);
-        private static final ModConfigSpec.BooleanValue SIT_AUTO_HOLD = SERVER_BUILDER
-                .comment("Auto-hold sit position (toggle mode)")
-                .define("movement.sitAutoHold", true);
-        // NOTE: all pose geometry (sit/crawl hitbox sizes, eye heights, view/render offsets) is now
-        // hardcoded in MovementPosture, not exposed here — serverconfig values are "sticky" and would
-        // not pick up new defaults, so we tune in code via the movement.debug hitbox logs.
         private static final ModConfigSpec.BooleanValue DEBUG = SERVER_BUILDER
-                .comment("Log the player's actual hitbox (bounding box, dimensions, eye position) when",
-                    "entering/leaving sit & crawl poses, on both client and server. For diagnosing pose alignment.",
-                    "Default ON for the current tuning session — set false once alignment is dialed in.")
-                .define("movement.debug", true);
+                .comment("Log the player's actual hitbox (bounding box, dimensions, eye position) on both client and server.",
+                        "Логировать фактический хитбокс игрока (бокс, габариты, позицию глаз) на клиенте и сервере.")
+                .define("movement.debug", false);
 
         public static boolean enabled;
-        public static boolean sitEnabled;
-        public static boolean crawlEnabled;
-        public static boolean slideEnabled;
-        public static double slideMaxForce;
         public static boolean leanAutoHold;
         public static boolean leanMouseCorrection;
-        public static boolean crawlBlockView;
-        public static double crawlBlockAngle;
-        public static double sitCooldown;
-        public static double crawlCooldown;
         public static double leanCooldown;
-        public static boolean sitAutoHold;
         public static boolean debug;
 
         private static void load() {
             enabled = ENABLED.get();
-            sitEnabled = SIT_ENABLED.get();
-            crawlEnabled = CRAWL_ENABLED.get();
-            slideEnabled = SLIDE_ENABLED.get();
-            slideMaxForce = SLIDE_MAX_FORCE.get();
             leanAutoHold = LEAN_AUTO_HOLD.get();
             leanMouseCorrection = LEAN_MOUSE_CORRECTION.get();
-            crawlBlockView = CRAWL_BLOCK_VIEW.get();
-            crawlBlockAngle = CRAWL_BLOCK_ANGLE.get();
-            sitCooldown = SIT_COOLDOWN.get();
-            crawlCooldown = CRAWL_COOLDOWN.get();
             leanCooldown = LEAN_COOLDOWN.get();
-            sitAutoHold = SIT_AUTO_HOLD.get();
             debug = DEBUG.get();
         }
 

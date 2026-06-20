@@ -11,9 +11,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ru.liko.tacz_mechanics.Config;
-import ru.liko.tacz_mechanics.movement.MovementPosture;
-import ru.liko.tacz_mechanics.movement.MovementStateManager;
-import ru.liko.tacz_mechanics.movement.PlayerState;
 import ru.liko.tacz_mechanics.movement.client.MovementClientHandler;
 
 /**
@@ -32,15 +29,8 @@ public abstract class CameraOffsetMixin {
         if (!Config.Movement.enabled) return;
         if (!(entity instanceof Player)) return;
         if (detached) return;
-        
-        // Pose offset (vertical for sit, vertical + forward for crawl) — shared with the eye/shooting
-        // origin so camera and eyes stay locked together and aligned to the posed model's head.
-        Vec3 poseOffset = Vec3.ZERO;
-        if (entity instanceof Player player) {
-            PlayerState state = MovementStateManager.get(player.getUUID());
-            poseOffset = MovementPosture.cameraEyeOffset(player, state, partialTick);
-        }
-        double offsetX = poseOffset.x, offsetY = poseOffset.y, offsetZ = poseOffset.z;
+
+        double offsetX = 0, offsetY = 0, offsetZ = 0;
 
         // Apply horizontal offset for leaning
         float probeOffset = MovementClientHandler.cameraProbeOffset;

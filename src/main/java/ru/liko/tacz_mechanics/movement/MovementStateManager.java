@@ -27,16 +27,6 @@ public class MovementStateManager {
         playerStates.clear();
     }
     
-    public static boolean isSitting(UUID playerId) {
-        PlayerState state = playerStates.get(playerId);
-        return state != null && state.isSitting();
-    }
-    
-    public static boolean isCrawling(UUID playerId) {
-        PlayerState state = playerStates.get(playerId);
-        return state != null && state.isCrawling();
-    }
-    
     public static float getProbeOffset(UUID playerId) {
         PlayerState state = playerStates.get(playerId);
         return state != null ? state.getProbeOffset() : 0f;

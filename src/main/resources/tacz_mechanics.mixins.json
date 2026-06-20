@@ -9,9 +9,6 @@
     "BulletHoleForceSpawnMixin",
     "EntityKineticBulletStartPosAccessorMixin",
     "FreeAimShootMixin",
-    "movement.PlayerDimensionsMixin",
-    "movement.CrawlBoundingBoxMixin",
-    "movement.TaczBulletObbMixin",
     "movement.PlayerEyePositionMixin",
     "movement.BulletLeanOffsetMixin"
   ],

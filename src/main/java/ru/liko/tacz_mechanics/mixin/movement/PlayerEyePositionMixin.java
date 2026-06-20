@@ -10,7 +10,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.liko.tacz_mechanics.Config;
 import ru.liko.tacz_mechanics.movement.LeanCollision;
-import ru.liko.tacz_mechanics.movement.MovementPosture;
 import ru.liko.tacz_mechanics.movement.MovementStateManager;
 import ru.liko.tacz_mechanics.movement.PlayerState;
 
@@ -41,11 +40,7 @@ public abstract class PlayerEyePositionMixin {
         if (state == null) return;
 
         Vec3 original = cir.getReturnValue();
-
-        // Pose offset (vertical for sit, vertical + forward for crawl) — same source the first-person
-        // camera uses, so the shooting/raycast origin tracks the posed model's head and matches the view.
-        Vec3 poseOffset = MovementPosture.cameraEyeOffset(player, state, partialTicks);
-        double offsetX = poseOffset.x, offsetY = poseOffset.y, offsetZ = poseOffset.z;
+        double offsetX = 0, offsetY = 0, offsetZ = 0;
 
         // Apply horizontal offset for leaning (clamp to collision-safe magnitude)
         float probeOffset = LeanCollision.safeProbeOffset(player, state.getProbeOffset());
