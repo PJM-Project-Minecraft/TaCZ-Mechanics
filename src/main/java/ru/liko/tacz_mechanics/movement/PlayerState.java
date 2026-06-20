@@ -6,34 +6,28 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the movement state of a player.
- * Tracks sitting, crawling, and leaning (probe) states.
+ * Tracks the leaning (probe) state only.
  */
 public class PlayerState {
-    private boolean sitting = false;
-    private boolean crawling = false;
     private byte probe = 0;
     private float probeOffset = 0;
     private float probeOffsetOld = 0;
     private long lastSyncTime = System.currentTimeMillis();
 
-    public boolean isSitting() { return sitting; }
-    public boolean isCrawling() { return crawling; }
     public byte getProbe() { return probe; }
     public float getProbeOffset() { return probeOffset; }
     public float getProbeOffsetOld() { return probeOffsetOld; }
 
-    private long lastSit;
-    private long lastCrawl;
     private long lastProbe;
 
     public void updateOffset() {
         probeOffsetOld = probeOffset;
         double amplifier = (System.currentTimeMillis() - lastSyncTime) * (60 / 1000d);
         lastSyncTime = System.currentTimeMillis();
-        
+
         // Slower speed for more realistic leaning (0.05 instead of 0.1)
         float speed = 0.05f;
-        
+
         if (probe == -1) {
             if (probeOffset > -1) {
                 probeOffset -= speed * amplifier;
@@ -79,40 +73,8 @@ public class PlayerState {
         }
     }
 
-    public boolean isStanding() {
-        return !crawling && !sitting;
-    }
-
-    public boolean canSit() {
-        return (System.currentTimeMillis() - this.lastSit > TimeUnit.MILLISECONDS.toMillis((long)(Config.Movement.sitCooldown * 1000)));
-    }
-
-    public boolean canCrawl() {
-        return (System.currentTimeMillis() - this.lastCrawl > TimeUnit.MILLISECONDS.toMillis((long)(Config.Movement.crawlCooldown * 1000)));
-    }
-
     public boolean canProbe() {
         return (System.currentTimeMillis() - this.lastProbe > TimeUnit.MILLISECONDS.toMillis((long)(Config.Movement.leanCooldown * 1000)));
-    }
-
-    public void enableSit() {
-        sitting = true;
-        disableCrawling();
-        this.lastSit = System.currentTimeMillis();
-    }
-
-    public void disableSit() {
-        sitting = false;
-    }
-
-    public void enableCrawling() {
-        crawling = true;
-        disableSit();
-        this.lastCrawl = System.currentTimeMillis();
-    }
-
-    public void disableCrawling() {
-        crawling = false;
     }
 
     public void resetProbe() {
@@ -130,14 +92,7 @@ public class PlayerState {
     }
 
     public void readCode(int code) {
-        probe = (byte) (code % 10 - 1);
-        code /= 10;
-        crawling = code % 10 != 0;
-        code /= 10;
-        sitting = code % 10 != 0;
-        if (crawling && sitting) {
-            sitting = false;
-        }
+        probe = (byte) (code - 1);
     }
 
     public void reset() {
@@ -145,6 +100,6 @@ public class PlayerState {
     }
 
     public int writeCode() {
-        return (sitting ? 1 : 0) * 100 + (crawling ? 1 : 0) * 10 + probe + 1;
+        return probe + 1;
     }
 }

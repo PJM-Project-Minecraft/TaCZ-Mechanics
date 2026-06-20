@@ -47,30 +47,7 @@ public abstract class HumanoidModelMixin<T extends LivingEntity> {
         // per-tick collision clamp (which would cause jitter near walls).
         float partial = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
         float probeOffset = Mth.lerp(partial, state.getProbeOffsetOld(), state.getProbeOffset());
-        
-        // Sitting — только ноги, как ModularMovements (ClientLitener.setRotationAngles)
-        if (state.isSitting()) {
-            rightLeg.xRot = -1.4137167F;
-            rightLeg.yRot = (float) Math.PI / 10F;
-            rightLeg.zRot = 0.07853982F;
-            leftLeg.xRot = -1.4137167F;
-            leftLeg.yRot = -(float) Math.PI / 10F;
-            leftLeg.zRot = -0.07853982F;
-        }
-        
-        // Crawling pose — руки вынесены вперёд по оси тела (поза стрелка лёжа: ствол
-        // смотрит вперёд). Руки/ствол могут выходить за передний край хитбокса — это
-        // нормально, бокс накрывает ТЕЛО (голова→ноги), а не оружие.
-        if (state.isCrawling()) {
-            head.xRot -= (float) (70 * Math.PI / 180);
-            rightArm.xRot *= 0.2f;
-            leftArm.xRot *= 0.2f;
-            rightArm.xRot += (float) (180 * Math.PI / 180);
-            leftArm.xRot += (float) (180 * Math.PI / 180);
-            rightLeg.xRot *= 0.2f;
-            leftLeg.xRot *= 0.2f;
-        }
-        
+
         // Leaning animation - only legs, like original ModularMovements
         // Body tilt is done via camera roll, not model rotation
         if (probeOffset >= 0) {
