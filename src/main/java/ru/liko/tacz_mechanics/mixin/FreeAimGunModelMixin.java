@@ -2,7 +2,6 @@ package ru.liko.tacz_mechanics.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.gun.AbstractGunItem;
 import com.tacz.guns.client.renderer.item.GunItemRendererWrapper;
 import net.minecraft.client.player.LocalPlayer;
@@ -27,7 +26,7 @@ public class FreeAimGunModelMixin {
     @Unique
     private static boolean taczMechanics$pushed;
 
-    @Inject(method = "renderFirstPerson", at = @At("HEAD"), require = 0)
+    @Inject(method = "renderFirstPersonInner", at = @At("HEAD"), require = 0)
     private void taczMechanics$pushAndRotate(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx,
                                                PoseStack poseStack, MultiBufferSource bufferSource,
                                                int light, float partialTick, CallbackInfo ci) {
@@ -37,29 +36,20 @@ public class FreeAimGunModelMixin {
         }
         try {
             FreeAimHandler handler = FreeAimHandler.getInstance();
-            float pitchOffset = handler.getInterpolatedPitch(partialTick);
-            float yawOffset = handler.getInterpolatedYaw(partialTick);
+            float pitchOffset = handler.getEffectivePitch(partialTick);
+            float yawOffset = handler.getEffectiveYaw(partialTick);
             if (Math.abs(pitchOffset) < 0.001f && Math.abs(yawOffset) < 0.001f) {
                 return;
             }
 
-            float aimingProgress = 0f;
-            try {
-                aimingProgress = IClientPlayerGunOperator.fromLocalPlayer(player).getClientAimingProgress(partialTick);
-            } catch (Exception ignored) {}
-
-            float aimFactor = 1.0f - (aimingProgress * 0.7f);
-            // Коэффициенты чувствительности
-            float pitchSens = 0.5f;
-            float yawSens = 0.4f;
             float pivotZ = 0.3f;
             float pivotY = -0.1f;
 
             poseStack.pushPose();
             taczMechanics$pushed = true;
             poseStack.translate(0, pivotY, pivotZ);
-            poseStack.mulPose(Axis.XP.rotationDegrees(-pitchOffset * pitchSens * aimFactor));
-            poseStack.mulPose(Axis.YP.rotationDegrees(yawOffset * yawSens * aimFactor));
+            poseStack.mulPose(Axis.XP.rotationDegrees(-pitchOffset));
+            poseStack.mulPose(Axis.YP.rotationDegrees(yawOffset));
             poseStack.translate(0, -pivotY, -pivotZ);
         } catch (Exception ignored) {
             if (taczMechanics$pushed) {
@@ -69,7 +59,7 @@ public class FreeAimGunModelMixin {
         }
     }
 
-    @Inject(method = "renderFirstPerson", at = @At("TAIL"), require = 0)
+    @Inject(method = "renderFirstPersonInner", at = @At("TAIL"), require = 0)
     private void taczMechanics$popPose(LocalPlayer player, ItemStack stack, ItemDisplayContext ctx,
                                         PoseStack poseStack, MultiBufferSource bufferSource,
                                         int light, float partialTick, CallbackInfo ci) {

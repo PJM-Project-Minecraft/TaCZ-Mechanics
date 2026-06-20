@@ -343,38 +343,98 @@ public class Config {
 
     public static final class FreeAim {
         private static final ModConfigSpec.BooleanValue ENABLED = SERVER_BUILDER
-                .comment("Enable free aim - gun direction lags behind camera movement")
+                .comment("Master switch for free aim. The gun sways with spring physics driven by camera turning, movement and recoil.",
+                        "Главный выключатель free aim. Оружие качается по пружинной физике от поворота камеры, движения и отдачи.")
                 .define("freeAim.enabled", true);
         private static final ModConfigSpec.DoubleValue MAX_ANGLE = SERVER_BUILDER
-                .comment("Maximum angle (degrees) the gun can deviate from view direction")
-                .defineInRange("freeAim.maxAngle", 2.5, 0.5, 25.0);
-        private static final ModConfigSpec.DoubleValue LERP_SPEED = SERVER_BUILDER
-                .comment("Speed at which the gun catches up to view direction (0.0-1.0, higher = faster)")
-                .defineInRange("freeAim.lerpSpeed", 0.15, 0.01, 1.0);
-        private static final ModConfigSpec.BooleanValue DISABLE_WHEN_AIMING = SERVER_BUILDER
-                .comment("Disable free aim when aiming down sights")
-                .define("freeAim.disableWhenAiming", true);
+                .comment("Maximum angle (degrees) the gun barrel can deviate from the view center. Also the hard clamp for the sway.",
+                        "Максимальный угол (градусы) отклонения ствола от центра экрана. Это же — жёсткий предел качания.")
+                .defineInRange("freeAim.maxAngle", 4.0, 0.5, 25.0);
+        private static final ModConfigSpec.DoubleValue STIFFNESS = SERVER_BUILDER
+                .comment("Spring stiffness: how strongly the gun is pulled back to center. Higher = snappier return, less float.",
+                        "Жёсткость пружины: как сильно оружие тянет обратно в центр. Больше = резче возврат, меньше «плавания».")
+                .defineInRange("freeAim.spring.stiffness", 0.25, 0.01, 1.0);
+        private static final ModConfigSpec.DoubleValue DAMPING = SERVER_BUILDER
+                .comment("Spring damping: resistance to motion. Higher = less overshoot/wobble; lower = more bouncy, lively sway.",
+                        "Демпфирование пружины: сопротивление движению. Больше = меньше перелёта/дрожи; меньше = живее, с отскоком.")
+                .defineInRange("freeAim.spring.damping", 0.55, 0.05, 2.0);
+        private static final ModConfigSpec.DoubleValue LOOK_SENSITIVITY = SERVER_BUILDER
+                .comment("How strongly camera rotation pushes the gun aside (impulse per degree of mouse turn). Higher = more lag on turns.",
+                        "Насколько сильно поворот камеры уводит оружие в сторону (импульс на градус поворота мыши). Больше = сильнее занос при поворотах.")
+                .defineInRange("freeAim.look.sensitivity", 0.6, 0.0, 5.0);
+        private static final ModConfigSpec.DoubleValue ADS_MULTIPLIER = SERVER_BUILDER
+                .comment("Sway multiplier while aiming down sights. 0 = fully steady in ADS, 1 = same sway as from the hip.",
+                        "Множитель качания при прицеливании (ADS). 0 = полностью неподвижно в прицеле, 1 = как от бедра.")
+                .defineInRange("freeAim.adsMultiplier", 0.35, 0.0, 1.0);
         private static final ModConfigSpec.DoubleValue CROSSHAIR_SCALE = SERVER_BUILDER
-                .comment("Scale factor for converting free aim angle to screen pixels")
+                .comment("Pixels the crosshair shifts per degree of sway, so the reticle follows where the barrel actually points.",
+                        "На сколько пикселей смещается прицел на градус качания, чтобы сетка следовала за реальным направлением ствола.")
                 .defineInRange("freeAim.crosshairScale", 10.0, 1.0, 50.0);
         private static final ModConfigSpec.BooleanValue DISABLE_CROSSHAIR_MOVEMENT = SERVER_BUILDER
-                .comment("Disable crosshair movement with free aim (crosshair stays centered)")
+                .comment("If true, the crosshair stays centered and does not follow the gun sway (gun model still moves).",
+                        "Если true, прицел остаётся в центре и не следует за качанием оружия (сама модель всё равно двигается).")
                 .define("freeAim.disableCrosshairMovement", false);
+        private static final ModConfigSpec.BooleanValue RECOIL_ENABLED = SERVER_BUILDER
+                .comment("Add an extra upward kick to the gun model on each shot (on top of TaCZ's own camera recoil).",
+                        "Добавлять дополнительный подброс модели оружия при каждом выстреле (поверх отдачи камеры самого TaCZ).")
+                .define("freeAim.recoil.enabled", true);
+        private static final ModConfigSpec.DoubleValue RECOIL_SCALE = SERVER_BUILDER
+                .comment("Strength of the recoil kick fed into the sway spring per shot. Higher = bigger muzzle climb on the model.",
+                        "Сила подброса отдачи, передаваемая в пружину за выстрел. Больше = сильнее «подскок» ствола на модели.")
+                .defineInRange("freeAim.recoil.scale", 0.8, 0.0, 10.0);
+        private static final ModConfigSpec.BooleanValue MOVEMENT_ENABLED = SERVER_BUILDER
+                .comment("Add gun sway from walking, sprinting and jumping/landing.",
+                        "Добавлять качание оружия от ходьбы, бега и прыжков/приземления.")
+                .define("freeAim.movement.enabled", true);
+        private static final ModConfigSpec.DoubleValue MOVEMENT_WALK_SCALE = SERVER_BUILDER
+                .comment("Sway amplitude while walking. Higher = more pronounced bob on the gun.",
+                        "Амплитуда качания при ходьбе. Больше = заметнее покачивание оружия.")
+                .defineInRange("freeAim.movement.walkScale", 0.15, 0.0, 5.0);
+        private static final ModConfigSpec.DoubleValue MOVEMENT_SPRINT_SCALE = SERVER_BUILDER
+                .comment("Sway amplitude while sprinting. Usually larger than walkScale for a heavier run feel.",
+                        "Амплитуда качания при беге (спринте). Обычно больше walkScale — для ощущения тяжёлого бега.")
+                .defineInRange("freeAim.movement.sprintScale", 0.35, 0.0, 5.0);
+        private static final ModConfigSpec.DoubleValue MOVEMENT_JUMP_SCALE = SERVER_BUILDER
+                .comment("Impulse applied on jump (barrel dips) and on landing (barrel kicks up). Higher = stronger jolt.",
+                        "Импульс при прыжке (ствол ныряет вниз) и при приземлении (ствол подбрасывает вверх). Больше = резче толчок.")
+                .defineInRange("freeAim.movement.jumpScale", 1.2, 0.0, 10.0);
+        private static final ModConfigSpec.BooleanValue THIRD_PERSON_ENABLED = SERVER_BUILDER
+                .comment("Show the free-aim sway on other players' guns in third person (synced over the network).",
+                        "Показывать качание free aim на оружии других игроков в третьем лице (синхронизируется по сети).")
+                .define("freeAim.thirdPerson.enabled", true);
 
         public static boolean enabled;
         public static double maxAngle;
-        public static double lerpSpeed;
-        public static boolean disableWhenAiming;
+        public static double stiffness;
+        public static double damping;
+        public static double lookSensitivity;
+        public static double adsMultiplier;
         public static double crosshairScale;
         public static boolean disableCrosshairMovement;
+        public static boolean recoilEnabled;
+        public static double recoilScale;
+        public static boolean movementEnabled;
+        public static double movementWalkScale;
+        public static double movementSprintScale;
+        public static double movementJumpScale;
+        public static boolean thirdPersonEnabled;
 
         private static void load() {
             enabled = ENABLED.get();
             maxAngle = MAX_ANGLE.get();
-            lerpSpeed = LERP_SPEED.get();
-            disableWhenAiming = DISABLE_WHEN_AIMING.get();
+            stiffness = STIFFNESS.get();
+            damping = DAMPING.get();
+            lookSensitivity = LOOK_SENSITIVITY.get();
+            adsMultiplier = ADS_MULTIPLIER.get();
             crosshairScale = CROSSHAIR_SCALE.get();
             disableCrosshairMovement = DISABLE_CROSSHAIR_MOVEMENT.get();
+            recoilEnabled = RECOIL_ENABLED.get();
+            recoilScale = RECOIL_SCALE.get();
+            movementEnabled = MOVEMENT_ENABLED.get();
+            movementWalkScale = MOVEMENT_WALK_SCALE.get();
+            movementSprintScale = MOVEMENT_SPRINT_SCALE.get();
+            movementJumpScale = MOVEMENT_JUMP_SCALE.get();
+            thirdPersonEnabled = THIRD_PERSON_ENABLED.get();
         }
 
         static void init() {

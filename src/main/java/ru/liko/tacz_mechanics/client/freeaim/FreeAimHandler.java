@@ -5,120 +5,110 @@ import com.tacz.guns.api.client.gameplay.IClientPlayerGunOperator;
 import com.tacz.guns.api.item.IGun;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 import ru.liko.tacz_mechanics.Config;
 import ru.liko.tacz_mechanics.network.FreeAimSyncPacket;
 
 /**
- * Free Aim System - gun lags behind camera movement for realistic feel.
+ * Free Aim orchestrator: spring-driven weapon sway.
+ * Holds two SwaySpring axes (pitch/yaw), feeds them impulses from sources
+ * (look delta now; movement/recoil added later) and exposes the effective
+ * (ADS-scaled) offset to all consumers.
  */
 public class FreeAimHandler {
-    
+
     private static final FreeAimHandler INSTANCE = new FreeAimHandler();
-    
-    // Offset in degrees
-    private float pitchOffset = 0f;
-    private float yawOffset = 0f;
-    
-    // For interpolation
-    private float prevPitchOffset = 0f;
-    private float prevYawOffset = 0f;
-    
-    // Previous player rotation
+
+    private final SwaySpring pitchSpring = new SwaySpring();
+    private final SwaySpring yawSpring = new SwaySpring();
+    private final MovementSource movementSource = new MovementSource();
+
+    // Previous player rotation (for look-delta source)
     private float lastPitch = Float.NaN;
     private float lastYaw = Float.NaN;
-    
-    // Sync
+
+    // Pending recoil impulse (added by RecoilSource between ticks)
+    private float pendingRecoilPitch = 0f;
+    private float pendingRecoilYaw = 0f;
+
     private int syncTimer = 0;
-    
+
     public static FreeAimHandler getInstance() {
         return INSTANCE;
     }
-    
-    /**
-     * Called every client tick.
-     */
+
     public void tick() {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        
-        // Early exit conditions
-        if (!Config.FreeAim.enabled || player == null || mc.isPaused()) {
+
+        if (!Config.FreeAim.enabled || player == null || mc.isPaused() || !isHoldingGun(player)) {
             reset();
             return;
         }
-        
-        // Must be holding TACZ gun
-        if (!isHoldingGun(player)) {
-            reset();
-            return;
-        }
-        
-        // Disable when aiming down sights
-        if (Config.FreeAim.disableWhenAiming && isAiming(player)) {
-            smoothReset();
-            return;
-        }
-        
-        // Save previous for interpolation
-        prevPitchOffset = pitchOffset;
-        prevYawOffset = yawOffset;
-        
-        // Get current rotation
+
+        // Sync spring params from config every tick (cheap, allows live reload)
+        float stiffness = (float) Config.FreeAim.stiffness;
+        float damping = (float) Config.FreeAim.damping;
+        float max = (float) Config.FreeAim.maxAngle;
+        pitchSpring.setParams(stiffness, damping, max);
+        yawSpring.setParams(stiffness, damping, max);
+
         float currentPitch = player.getXRot();
         float currentYaw = player.getYRot();
-        
-        // First tick - initialize
+
         if (Float.isNaN(lastPitch)) {
             lastPitch = currentPitch;
             lastYaw = currentYaw;
-            return;
         }
-        
-        // Calculate delta
+
+        // === Source: look delta ===
         float deltaPitch = currentPitch - lastPitch;
         float deltaYaw = currentYaw - lastYaw;
-        
-        // Yaw wrap handling
         while (deltaYaw > 180) deltaYaw -= 360;
         while (deltaYaw < -180) deltaYaw += 360;
-        
-        // Save for next tick
         lastPitch = currentPitch;
         lastYaw = currentYaw;
-        
-        // Apply delta to offset (negative = gun lags behind)
-        pitchOffset -= deltaPitch;
-        yawOffset -= deltaYaw;
-        
-        // Clamp to max angle
-        float max = (float) Config.FreeAim.maxAngle;
-        pitchOffset = Mth.clamp(pitchOffset, -max, max);
-        yawOffset = Mth.clamp(yawOffset, -max, max);
-        
-        // Lerp back to center (gun catches up)
-        float lerp = (float) Config.FreeAim.lerpSpeed;
-        pitchOffset *= (1f - lerp);
-        yawOffset *= (1f - lerp);
-        
-        // Snap small values to zero
-        if (Math.abs(pitchOffset) < 0.001f) pitchOffset = 0;
-        if (Math.abs(yawOffset) < 0.001f) yawOffset = 0;
-        
-        // Sync to server
+
+        float lookSens = (float) Config.FreeAim.lookSensitivity;
+        // Gun lags behind: impulse opposite to camera movement
+        pitchSpring.addImpulse(-deltaPitch * lookSens);
+        yawSpring.addImpulse(-deltaYaw * lookSens);
+
+        // === Source: movement ===
+        movementSource.apply(player, pitchSpring, yawSpring);
+
+        // === Source: recoil (queued by RecoilSource) ===
+        if (pendingRecoilPitch != 0f || pendingRecoilYaw != 0f) {
+            pitchSpring.addImpulse(pendingRecoilPitch);
+            yawSpring.addImpulse(pendingRecoilYaw);
+            pendingRecoilPitch = 0f;
+            pendingRecoilYaw = 0f;
+        }
+
+        // === Integrate (dt = 1 tick) ===
+        pitchSpring.update(1f);
+        yawSpring.update(1f);
+
+        // === Sync effective offset (ADS already applied) to server every 2 ticks ===
         if (++syncTimer >= 2) {
             syncTimer = 0;
-            if (pitchOffset != 0 || yawOffset != 0) {
+            float effPitch = getEffectivePitch(1f);
+            float effYaw = getEffectiveYaw(1f);
+            if (effPitch != 0f || effYaw != 0f) {
                 try {
-                    PacketDistributor.sendToServer(new FreeAimSyncPacket(pitchOffset, yawOffset));
+                    PacketDistributor.sendToServer(new FreeAimSyncPacket(effPitch, effYaw));
                 } catch (Exception e) {
                     LogUtils.getLogger().warn("Failed to send FreeAim sync packet", e);
                 }
             }
         }
     }
-    
+
+    public void addRecoilImpulse(float pitchImpulse, float yawImpulse) {
+        pendingRecoilPitch += pitchImpulse;
+        pendingRecoilYaw += yawImpulse;
+    }
+
     private boolean isHoldingGun(LocalPlayer player) {
         try {
             return IGun.mainHandHoldGun(player);
@@ -126,88 +116,57 @@ public class FreeAimHandler {
             return false;
         }
     }
-    
-    private boolean isAiming(LocalPlayer player) {
+
+    private float aimingProgress(float pt) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) return 0f;
         try {
-            IClientPlayerGunOperator op = IClientPlayerGunOperator.fromLocalPlayer(player);
-            return op.getClientAimingProgress(1.0f) > 0.5f;
+            return IClientPlayerGunOperator.fromLocalPlayer(mc.player).getClientAimingProgress(pt);
         } catch (Exception e) {
-            return false;
+            return 0f;
         }
     }
-    
-    private void smoothReset() {
-        prevPitchOffset = pitchOffset;
-        prevYawOffset = yawOffset;
-        float lerp = (float) Config.FreeAim.lerpSpeed * 2f;
-        pitchOffset *= (1f - lerp);
-        yawOffset *= (1f - lerp);
-        if (Math.abs(pitchOffset) < 0.001f) pitchOffset = 0;
-        if (Math.abs(yawOffset) < 0.001f) yawOffset = 0;
+
+    /** ADS scale: lerp(1.0, adsMultiplier, aimingProgress). */
+    private float adsFactor(float pt) {
+        float ads = (float) Config.FreeAim.adsMultiplier;
+        float p = aimingProgress(pt);
+        return 1f + (ads - 1f) * p;
     }
-    
-    public void reset() {
-        pitchOffset = 0;
-        yawOffset = 0;
-        prevPitchOffset = 0;
-        prevYawOffset = 0;
-        lastPitch = Float.NaN;
-        lastYaw = Float.NaN;
+
+    public float getEffectivePitch(float pt) {
+        return pitchSpring.getInterpolated(pt) * adsFactor(pt);
     }
-    
-    // === Getters ===
-    
-    public float getPitchOffset() {
-        return pitchOffset;
+
+    public float getEffectiveYaw(float pt) {
+        return yawSpring.getInterpolated(pt) * adsFactor(pt);
     }
-    
-    public float getYawOffset() {
-        return yawOffset;
-    }
-    
-    public float getInterpolatedPitch(float pt) {
-        return Mth.lerp(pt, prevPitchOffset, pitchOffset);
-    }
-    
-    public float getInterpolatedYaw(float pt) {
-        return Mth.lerp(pt, prevYawOffset, yawOffset);
-    }
-    
-    /**
-     * Crosshair X offset (screen pixels).
-     */
+
     public float getCrosshairX(float pt) {
-        if (!isEnabled()) return 0;
-        // Yaw offset -> horizontal screen movement (inverted)
-        return -getInterpolatedYaw(pt) * (float) Config.FreeAim.crosshairScale;
+        if (!isActive() || Config.FreeAim.disableCrosshairMovement) return 0f;
+        return -getEffectiveYaw(pt) * (float) Config.FreeAim.crosshairScale;
     }
-    
-    /**
-     * Crosshair Y offset (screen pixels).
-     */
+
     public float getCrosshairY(float pt) {
-        if (!isEnabled()) return 0;
-        // Pitch offset -> vertical screen movement (inverted)
-        return -getInterpolatedPitch(pt) * (float) Config.FreeAim.crosshairScale;
+        if (!isActive() || Config.FreeAim.disableCrosshairMovement) return 0f;
+        return -getEffectivePitch(pt) * (float) Config.FreeAim.crosshairScale;
     }
-    
-    /**
-     * Check if free aim should be active right now.
-     */
-    public boolean isEnabled() {
+
+    public boolean isActive() {
         if (!Config.FreeAim.enabled) return false;
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer player = mc.player;
-        if (player == null) return false;
-        if (!isHoldingGun(player)) return false;
-        if (Config.FreeAim.disableWhenAiming && isAiming(player)) return false;
-        return true;
+        return player != null && isHoldingGun(player);
     }
-    
-    /**
-     * Has any offset right now?
-     */
-    public boolean hasOffset() {
-        return pitchOffset != 0 || yawOffset != 0;
+
+    public void reset() {
+        pitchSpring.reset();
+        yawSpring.reset();
+        lastPitch = Float.NaN;
+        lastYaw = Float.NaN;
+        pendingRecoilPitch = 0f;
+        pendingRecoilYaw = 0f;
+        syncTimer = 0;
+        movementSource.reset();
     }
 }
